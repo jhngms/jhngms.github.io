@@ -62,122 +62,64 @@
   }
 
 
-  .top-banner-title {
-    position: absolute;
-    top: 2rem;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #f0ece2;
-    font-size: 1.6rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    text-align: center;
-  }
-
-
-  /* ---- Brown gradient top banner ---- */
+  /* ---- Wavy black top banner ---- */
   .top-banner {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 150px;
-    background: linear-gradient(
-      to bottom,
-      #24140f 0%,
-      #24140f 35%,
-      rgba(74, 47, 36, 0.95) 50%,
-      rgba(74, 47, 36, 0.65) 68%,
-      rgba(74, 47, 36, 0.25) 85%,
-      rgba(74, 47, 36, 0) 100%
-    );
+    height: 105px;
+    background: #000;
     z-index: 10;
-    pointer-events: none;
   }
 
-  /* ---- Top-left site navigation ---- */
+  .banner-wave {
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 55px;
+    display: block;
+  }
+
+  /* ---- Exact top ribbon styling ---- */
+  .top-banner {
+    position: fixed; top: 0; left: 0; width: 100%; height: 150px;
+    background: linear-gradient(to bottom, #24140f 0%, #24140f 35%, rgba(36,20,15,.95) 50%, rgba(36,20,15,.65) 68%, rgba(36,20,15,.25) 85%, rgba(36,20,15,0) 100%);
+    z-index: 10; pointer-events: none;
+  }
+
+  .site-title {
+    position: fixed; top: 2rem; left: 50%; transform: translate(-50%, -50%);
+    z-index: 21; color: #f0ece2; font-size: 1.6rem; font-weight: 600;
+    letter-spacing: -0.01em; white-space: nowrap; text-align: center; pointer-events: none;
+  }
+
   .site-nav {
-    position: fixed;
-    top: 2rem;
-    left: 1rem;
-    transform: translateY(-50%);
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    gap: 0.15rem;
+    position: fixed; top: 2.25rem; left: 1rem; transform: translateY(-50%);
+    z-index: 20; display: flex; align-items: center; gap: .15rem;
   }
 
   .site-nav a {
-    width: 54px;
-    height: 54px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    line-height: 0;
-    text-decoration: none;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    width: 54px; height: 54px; padding: 0; border: 0; background: transparent;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    line-height: 0; text-decoration: none; transition: transform .2s ease, opacity .2s ease;
   }
 
-  .site-nav a img {
-    display: block;
-    width: 22px;
-    height: 22px;
-    object-fit: contain;
-    pointer-events: none;
-  }
+  .site-nav a img { display: block; width: 31px; height: 31px; object-fit: contain; pointer-events: none; }
+  .site-nav a:hover { transform: scale(1.05); opacity: 1; }
+  .site-nav a:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
 
-  .site-nav a:hover {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  .site-nav a:focus-visible {
-    outline: 1px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 5px;
-  }
-
-  /* Liquid-chrome pause/play control in the top-right corner. */
   .play-toggle {
-    position: fixed;
-    top: 2rem;
-    right: 1rem;
-    transform: translateY(-50%);
-    z-index: 20;
-    width: 54px;
-    height: 54px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    line-height: 0;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    position: fixed; top: 2.25rem; right: 1rem; transform: translateY(-50%);
+    z-index: 20; width: 54px; height: 54px; padding: 0; border: 0; background: transparent;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 0;
+    transition: transform .2s ease, opacity .2s ease;
   }
 
-  .play-toggle img {
-    display: block;
-    width: 22px;
-    height: 22px;
-    object-fit: contain;
-    pointer-events: none;
-  }
-
-  .play-toggle:hover {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.0);
-  }
-
-  .play-toggle:focus-visible {
-    outline: 1px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 5px;
-  }
+  .play-toggle img { display: block; width: 31px; height: 31px; object-fit: contain; pointer-events: none; }
+  .play-toggle:hover { transform: translateY(-50%) scale(1.05); opacity: 1; }
+  .play-toggle:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
 
   /* ---- Vertical carousel ---- */
   .carousel {
@@ -252,7 +194,7 @@
   .slide .title {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #24140f;
+    color: #4a2f24;
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
@@ -264,7 +206,7 @@
     flex: 0 0 auto;
     font-size: 0.82rem;
     font-weight: 500;
-    color: #24140f;
+    color: #4a2f24;
     text-align: right;
     white-space: nowrap;
   }
@@ -298,7 +240,7 @@
 
     .slide .title,
     .slide .date {
-      color: #24140f !important;
+      color: #4a2f24 !important;
     }
   }
 
@@ -306,9 +248,8 @@
 </head>
 <body>
 
-  <div class="top-banner" aria-hidden="true">
-    <div class="top-banner-title">jack gomes</div>
-  </div>
+  <div class="top-banner" aria-hidden="true"></div>
+  <div class="site-title">jack gomes</div>
 
   <nav class="site-nav" aria-label="Site navigation">
     <a href="index.html" aria-label="Home" title="Home">
@@ -341,6 +282,11 @@
     before uploading (Preview on Mac, or squoosh.app, do this in seconds).
     That alone fixes most "laggy transition" issues.
   -->
+
+  <header>
+    <h1>jack gomes</h1>
+    <p>photos over the years, in no particular order</p>
+  </header>
 
   <div class="carousel" id="carousel">
 

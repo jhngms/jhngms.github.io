@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>about — jack gomes</title>
+<title>about —  </title>
 
 <style>
   * {
@@ -37,10 +37,45 @@
     padding: 0 1.5rem 4rem;
   }
 
+  /* Top ribbon */
+  .top-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(
+      to bottom,
+      #24140f 0%,
+      #24140f 35%,
+      rgba(36,20,15,.95) 50%,
+      rgba(36,20,15,.65) 68%,
+      rgba(36,20,15,.25) 85%,
+      rgba(36,20,15,0) 100%
+    );
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .site-title {
+    position: fixed;
+    top: 2rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 21;
+    color: #f0ece2;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-align: center;
+    pointer-events: none;
+  }
+
   /* Navigation */
   .site-nav {
     position: fixed;
-    top: 3rem;
+    top: 2.25rem;
     left: 1rem;
     transform: translateY(-50%);
     z-index: 20;
@@ -135,6 +170,10 @@
 
   /* Mobile */
   @media (max-width:600px) {
+    .site-title {
+      top: 2rem;
+      font-size: 1.6rem;
+    }
     .site-nav {
       left: .5rem;
     }
@@ -173,6 +212,9 @@
 </head>
 
 <body>
+
+  <div class="top-banner" aria-hidden="true"></div>
+  <div class="site-title"> </div>
 
   <nav class="site-nav" aria-label="Site navigation">
     <a href="index.html" aria-label="Home" title="Home">
