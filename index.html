@@ -60,9 +60,6 @@
     margin-top: 0.3rem;
     font-size: 0.95rem;
   }
-
-
-  /* ---- Wavy black top banner ---- */
   .top-banner {
     position: fixed;
     top: 0;
@@ -555,7 +552,7 @@
 
       slide.style.transform = `translate3d(0, ${translateY}%, 0) scale(${scale})`;
       slide.style.opacity = opacity;
-      slide.style.filter = 'none';
+      slide.style.filter = `blur(${Math.min(abs * 4, 4)}px)`;
       slide.style.zIndex = abs < 0.5 ? 3 : abs < 1.5 ? 2 : 1;
     }
 
