@@ -13,6 +13,7 @@
   }
 
   :root {
+    color-scheme: light;
     --card-cream: #f7f3e8;
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --text: #f0ece2;    /* light cream, for contrast against the dark image */
@@ -204,6 +205,23 @@
   }
 
 
+
+  /* Keep the photo border and info card cream even when the device is in dark mode. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --card-cream: #f7f3e8;
+    }
+
+    .slide .thumb {
+      border-color: #f7f3e8;
+      background: #f7f3e8;
+    }
+
+    .slide .caption {
+      background: #f7f3e8;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -370,7 +388,7 @@
     <!-- Photo 14 -->
     <div class="slide" data-title="Photo 14">
         <div class="thumb">
-            <img src="photos\IMG_3579.JPG" alt="Photo 14" decoding="async">
+            <img src="photos\image.png" alt="Photo 14" decoding="async">
             <div class="caption">
                 <span class="title">maine</span>
                 <span class="date">2022</span>
