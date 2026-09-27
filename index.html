@@ -62,8 +62,9 @@
   /* Liquid-chrome pause/play control in the top-right corner. */
   .play-toggle {
     position: fixed;
-    top: 1rem;
+    top: 3rem;
     right: 1rem;
+    transform: translateY(-50%);
     z-index: 20;
     width: 54px;
     height: 54px;
@@ -80,15 +81,15 @@
 
   .play-toggle img {
     display: block;
-    width: 38px;
-    height: 38px;
+    width: 31px;
+    height: 31px;
     object-fit: contain;
     pointer-events: none;
   }
 
   .play-toggle:hover {
-    opacity: 0.88;
-    transform: scale(1.06);
+    opacity: 1;
+    transform: translateY(-50%) scale(1.0);
   }
 
   .play-toggle:focus-visible {
@@ -257,9 +258,9 @@
 
     <div class="slide" data-title="Photo 03">
       <div class="thumb">
-        <img src="photos/IMG_3579.JPG" alt="Photo 03" decoding="async">
+        <img src="photos\20220517_224044_Original.jpg" alt="Photo 03" decoding="async">
       <div class="caption">
-          <span class="title">maine</span>
+          <span class="title">delaware</span>
           <span class="date">2022</span>
         </div>
       </div>
@@ -267,10 +268,10 @@
 
     <div class="slide" data-title="Photo 04">
       <div class="thumb">
-        <img src="photos/DSC_0062_Original.jpg" alt="Photo 04" decoding="async">
+        <img src="photos\IMG_1722.jpg" alt="Photo 04" decoding="async">
       <div class="caption">
-          <span class="title">storrs</span>
-          <span class="date">2024</span>
+          <span class="title">manchester</span>
+          <span class="date">2026</span>
         </div>
       </div>
     </div>
@@ -359,6 +360,16 @@
         <img src="photos\IMG_6821.jpg" alt="Photo 13" decoding="async">
       <div class="caption">
           <span class="title">assisi</span>
+          <span class="date">2023</span>
+        </div>
+      </div>
+    </div>
+  </div>
+      <div class="slide" data-title="Photo 14">
+      <div class="thumb">
+        <img src="photos\IMG_6821.jpg" alt="Photo 12" decoding="async">
+      <div class="caption">
+          <span class="title">perugia</span>
           <span class="date">2023</span>
         </div>
       </div>
