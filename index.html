@@ -91,13 +91,16 @@
     it was shot in.
   */
   .slide .thumb {
-    display: inline-block;
-    line-height: 0; /* removes the tiny gap inline-block adds under images */
+    display: inline-flex;
+    flex-direction: column;
+    width: max-content;
+    max-width: 100%;
+    line-height: 0;
     border-radius: 0;
     overflow: hidden;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
-    border: 4px solid #ffffff; /* slim white border around every photo */
-    background: rgba(0, 0, 0, 0.25); /* fills any letterboxed space */
+    border: 4px solid #ffffff;
+    background: #ffffff;
   }
 
   .slide .thumb img {
@@ -109,20 +112,40 @@
     object-fit: contain;
   }
 
+  /* The white card continues naturally below each image. Its width is
+     determined by the rendered image, so portrait and landscape photos
+     each get a correctly sized caption area. */
   .slide .caption {
-    margin-top: 0.9rem;
-  }
-
-  .slide .date {
-    font-size: 0.78rem;
-    color: var(--muted);
-    display: block;
-    margin-bottom: 0.2rem;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0.9rem 0.75rem;
+    background: #ffffff;
+    line-height: 1.15;
+    text-align: initial;
   }
 
   .slide .title {
-    font-size: 1.15rem;
+    font-size: 0.95rem;
     font-weight: 600;
+    color: #4a2f24;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .slide .date {
+    order: 2;
+    flex: 0 0 auto;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #4a2f24;
+    text-align: right;
+    white-space: nowrap;
   }
 
   /* active class is still used to toggle pointer-events / a11y,
@@ -174,120 +197,120 @@
     <div class="slide" data-title="Photo 01">
       <div class="thumb">
         <img src="photos/IMG_6787.JPG" alt="Photo 01" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2023</span>
-        <span class="title">the vatican</span>
+          <span class="title">vatican city</span>
+          <span class="date">2023</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 02">
       <div class="thumb">
         <img src="photos/IMG_1588.jpg" alt="Photo 02" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2023</span>
-        <span class="title">perugia</span>
+          <span class="title">perugia</span>
+          <span class="date">2023</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 03">
       <div class="thumb">
         <img src="photos/IMG_3579.JPG" alt="Photo 03" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2022</span>
-        <span class="title">maine</span>
+          <span class="title">maine</span>
+          <span class="date">2022</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 04">
       <div class="thumb">
         <img src="photos/DSC_0062_Original.jpg" alt="Photo 04" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2024</span>
-        <span class="title">storrs</span>
+          <span class="title">storrs</span>
+          <span class="date">2024</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 05">
       <div class="thumb">
         <img src="photos/IMG_0780.jpg" alt="Photo 05" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2025</span>
-        <span class="title">naples</span>
+          <span class="title">naples</span>
+          <span class="date">2025</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 06">
       <div class="thumb">
         <img src="photos/IMG_8497.png" alt="Photo 06" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2023</span>
-        <span class="title">vermont</span>
+          <span class="title">vermont</span>
+          <span class="date">2023</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 07">
       <div class="thumb">
         <img src="photos/IMG_7471.jpg" alt="Photo 07" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2023</span>
-        <span class="title">narragansett</span>
+          <span class="title">narragansett</span>
+          <span class="date">2023</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 08">
       <div class="thumb">
         <img src="photos/IMG_2998.jpg" alt="Photo 08" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2021</span>
-        <span class="title">north stonington</span>
+          <span class="title">north stonington</span>
+          <span class="date">2021</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 09">
       <div class="thumb">
         <img src="photos/IMG_1764.jpg" alt="Photo 09" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2026</span>
-        <span class="title">manchester</span>
+          <span class="title">manchester</span>
+          <span class="date">2026</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 10">
       <div class="thumb">
         <img src="photos/IMG_0285.jpg" alt="Photo 10" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2025</span>
-        <span class="title">hartford</span>
+          <span class="title">hartford</span>
+          <span class="date">2025</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 11">
       <div class="thumb">
         <img src="photos/IMG_6851.jpg" alt="Photo 11" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2023</span>
-        <span class="title">assisi</span>
+          <span class="title">assisi</span>
+          <span class="date">2023</span>
+        </div>
       </div>
     </div>
 
     <div class="slide" data-title="Photo 12">
       <div class="thumb">
         <img src="photos/img_9999.png" alt="Photo 12" decoding="async">
-      </div>
       <div class="caption">
-        <span class="date">2023</span>
-        <span class="title">vermont</span>
+          <span class="title">vermont</span>
+          <span class="date">2023</span>
+        </div>
       </div>
     </div>
 
@@ -320,7 +343,15 @@
     }
     document.querySelectorAll('.slide img').forEach(downscaleImage);
 
-    const slides = Array.from(document.querySelectorAll('.slide'));
+    let slides = Array.from(document.querySelectorAll('.slide'));
+
+    // Randomize the photo order once when the site launches.
+    // Fisher-Yates produces an unbiased shuffle.
+    for (let i = slides.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [slides[i], slides[j]] = [slides[j], slides[i]];
+    }
+
     const total = slides.length;
 
     // "position" is a continuous, fractional value (e.g. 3.4 means
@@ -428,8 +459,8 @@
     const carouselEl = document.getElementById('carousel');
 
     // --- Automatic slideshow ---
-    // Advance every 5 seconds. Hovering the photo pauses the timer.
-    const AUTOPLAY_DELAY = 5000;
+    // Advance every 2.5 seconds. Hovering the photo pauses the timer.
+    const AUTOPLAY_DELAY = 2500;
     let autoplayPaused = false;
     let autoplayTimer = null;
 
