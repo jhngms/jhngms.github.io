@@ -13,6 +13,7 @@
   }
 
   :root {
+    --card-cream: #f7f3e8;
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --text: #f0ece2;    /* light cream, for contrast against the dark image */
     --muted: #b7b0a1;
@@ -109,10 +110,7 @@
 
   .slide {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: max-content;
-    max-width: 92vw;
+    width: min(760px, 92vw);
     text-align: center;
     /* No CSS transition here on purpose — the JS animation loop below
        sets transform/opacity/filter every frame, continuously easing
@@ -140,8 +138,8 @@
     border-radius: 0;
     overflow: hidden;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
-    border: 4px solid #ffffff;
-    background: #ffffff;
+    border: 4px solid var(--card-cream);
+    background: var(--card-cream);
   }
 
   .slide .thumb img {
@@ -164,7 +162,7 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 0.7rem 0.9rem 0.75rem;
-    background: #ffffff;
+    background: var(--card-cream);
     line-height: 1.15;
     text-align: initial;
   }
@@ -358,6 +356,7 @@
         </div>
       </div>
     </div>
+    <!-- Photo 13 -->
     <div class="slide" data-title="Photo 13">
         <div class="thumb">
             <img src="photos/IMG_6821.jpg" alt="Photo 13" decoding="async">
@@ -368,16 +367,16 @@
         </div>
     </div>
 
+    <!-- Photo 14 -->
     <div class="slide" data-title="Photo 14">
         <div class="thumb">
-            <img src="photos/image.png" alt="Photo 14" decoding="async">
+            <img src="photos\IMG_3579.JPG" alt="Photo 14" decoding="async">
             <div class="caption">
                 <span class="title">maine</span>
                 <span class="date">2022</span>
             </div>
         </div>
     </div>
-
 </div>
   <script>
     // Large phone photos (often 3000-4000px wide) are expensive to
@@ -452,13 +451,11 @@
     // is what makes the motion feel like a single fluid gesture.
     let position = 0;
     let targetPosition = 0;
-    let velocity = 0;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // A lightly damped spring gives the carousel a long, buttery glide
-    // without feeling sluggish or "steppy".
-    const SPRING = reduceMotion ? 1 : 0.075;
-    const DAMPING = reduceMotion ? 0 : 0.78;
+    // Smooth easing with no spring/overshoot. This keeps the glide fluid
+    // on phones without the "bounce into place" effect.
+    const EASE = reduceMotion ? 1 : 0.12;
 
     // Shortest wrapped distance from `a` to `b` on a circular track of length `total`
     function wrappedDelta(a, b) {
@@ -492,7 +489,7 @@
       // but continuously blurring multiple large photos can make scrolling hitch.
       const translateY = diff * 68;
 
-      slide.style.transform = `translate3d(-50%, calc(-50% + ${translateY}%), 0) scale(${scale})`;
+      slide.style.transform = `translate3d(0, ${translateY}%, 0) scale(${scale})`;
       slide.style.opacity = opacity;
       slide.style.filter = 'none';
       slide.style.zIndex = abs < 0.5 ? 3 : abs < 1.5 ? 2 : 1;
@@ -513,18 +510,13 @@
     function tick() {
       const delta = wrappedDelta(position, targetPosition);
 
-      // Spring toward the target, then damp the velocity. This keeps the
-      // movement continuous and gives it a natural "glide to rest".
+      // Ease directly toward the target. Unlike a spring, this never
+      // overshoots the destination, so slides settle cleanly on mobile.
       if (!reduceMotion) {
-        velocity += delta * SPRING;
-        velocity *= DAMPING;
-
-        // Prevent tiny floating-point motion from keeping the carousel alive.
-        if (Math.abs(delta) < 0.0004 && Math.abs(velocity) < 0.0004) {
+        if (Math.abs(delta) < 0.0004) {
           position = targetPosition;
-          velocity = 0;
         } else {
-          position = wrap(position + velocity);
+          position = wrap(position + delta * EASE);
         }
       } else {
         position = targetPosition;
