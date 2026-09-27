@@ -73,13 +73,16 @@
     position: absolute;
     width: min(760px, 92vw);
     text-align: center;
-    /* No CSS transition here on purpose — the JS animation loop below
-       sets transform/opacity/filter every frame, continuously easing
-       toward the scroll position. That's what makes it feel fluid
-       instead of "jump then animate." */
+    transition: transform 1.1s cubic-bezier(0.45, 0, 0.15, 1),
+                opacity 1.1s cubic-bezier(0.45, 0, 0.15, 1),
+                filter 1.1s cubic-bezier(0.45, 0, 0.15, 1);
     pointer-events: none;
     will-change: transform, opacity, filter;
+    /* Perf: isolate each slide into its own compositor layer so
+       animating transform/opacity/filter doesn't trigger repaints
+       of the whole page — this is what actually makes the motion smooth. */
     backface-visibility: hidden;
+    transform-style: preserve-3d;
     contain: layout style;
   }
 
@@ -93,7 +96,7 @@
   .slide .thumb {
     display: inline-block;
     line-height: 0; /* removes the tiny gap inline-block adds under images */
-    border-radius: 0;
+    border-radius: 14px;
     overflow: hidden;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
     border: 4px solid #ffffff; /* slim white border around every photo */
@@ -125,11 +128,34 @@
     font-weight: 600;
   }
 
-  /* active class is still used to toggle pointer-events / a11y,
-     but position, scale, opacity, and blur are all set continuously
-     by JS every animation frame instead of jumping between fixed states. */
+  /* Position states, applied by JS based on distance from the active slide */
   .slide.active {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    filter: blur(0px);
+    z-index: 3;
     pointer-events: auto;
+  }
+
+  .slide.prev {
+    transform: translateY(-68%) scale(0.5);
+    opacity: 0.3;
+    filter: blur(2px);
+    z-index: 2;
+  }
+
+  .slide.next {
+    transform: translateY(68%) scale(0.5);
+    opacity: 0.3;
+    filter: blur(2px);
+    z-index: 2;
+  }
+
+  .slide.far {
+    transform: translateY(0) scale(0.4);
+    opacity: 0;
+    filter: blur(4px);
+    z-index: 1;
   }
 
   .carousel-hint {
@@ -141,7 +167,11 @@
     padding-bottom: 1rem;
   }
 
-
+  @media (prefers-reduced-motion: reduce) {
+    .slide {
+      transition: none;
+    }
+  }
 </style>
 </head>
 <body>
@@ -296,172 +326,61 @@
   <p class="carousel-hint">Scroll, swipe, or use ↑ / ↓ to browse</p>
 
   <script>
-    // Large phone photos (often 3000-4000px wide) are expensive to
-    // scale/blur every animation frame. Once each image loads, redraw
-    // it onto a canvas at a sane max size and swap the <img> to that —
-    // a one-time cost that makes every subsequent frame much cheaper.
-    function downscaleImage(img) {
-      const MAX_DIM = 1400;
-      const run = () => {
-        const w = img.naturalWidth, h = img.naturalHeight;
-        if (!w || !h || Math.max(w, h) <= MAX_DIM) return; // already small enough
-        const scale = MAX_DIM / Math.max(w, h);
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(w * scale);
-        canvas.height = Math.round(h * scale);
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => {
-          if (blob) img.src = URL.createObjectURL(blob);
-        }, 'image/jpeg', 0.85);
-      };
-      if (img.complete) run();
-      else img.addEventListener('load', run, { once: true });
-    }
-    document.querySelectorAll('.slide img').forEach(downscaleImage);
-
     const slides = Array.from(document.querySelectorAll('.slide'));
     const total = slides.length;
-
-    // "position" is a continuous, fractional value (e.g. 3.4 means
-    // 40% of the way from slide 3 to slide 4). Every frame, position
-    // eases toward targetPosition instead of jumping — that easing,
-    // happening continuously rather than as a one-shot CSS transition,
-    // is what makes the motion feel like a single fluid gesture.
-    let position = 0;
-    let targetPosition = 0;
-    let velocity = 0;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // A lightly damped spring gives the carousel a long, buttery glide
-    // without feeling sluggish or "steppy".
-    const SPRING = reduceMotion ? 1 : 0.075;
-    const DAMPING = reduceMotion ? 0 : 0.78;
-
-    // Shortest wrapped distance from `a` to `b` on a circular track of length `total`
-    function wrappedDelta(a, b) {
-      let d = (b - a) % total;
-      if (d > total / 2) d -= total;
-      if (d < -total / 2) d += total;
-      return d;
-    }
-
-    function wrap(n) {
-      return ((n % total) + total) % total;
-    }
-
-    function styleSlide(slide, diff) {
-      const abs = Math.min(Math.abs(diff), 2);
-
-      // Slides more than ~2.4 steps away are fully invisible anyway —
-      // remove them from rendering entirely instead of still animating
-      // filter/transform on them every frame. This cuts the number of
-      // elements the browser has to composite+blur each frame roughly
-      // in half on a 12-photo carousel.
-      if (Math.abs(diff) > 2.4) {
-        slide.style.display = 'none';
-        return;
-      }
-      slide.style.display = '';
-
-      const scale = abs <= 1 ? 1 - 0.5 * abs : 0.5 - 0.1 * (abs - 1);
-      const opacity = abs <= 1 ? 1 - 0.7 * abs : Math.max(0, 0.3 * (2 - abs));
-      // Keep the animation on transform + opacity only. Blur is visually nice,
-      // but continuously blurring multiple large photos can make scrolling hitch.
-      const translateY = diff * 68;
-
-      slide.style.transform = `translate3d(0, ${translateY}%, 0) scale(${scale})`;
-      slide.style.opacity = opacity;
-      slide.style.filter = 'none';
-      slide.style.zIndex = abs < 0.5 ? 3 : abs < 1.5 ? 2 : 1;
-    }
+    let current = 0;
+    let isAnimating = false;
 
     function render() {
       slides.forEach((slide, i) => {
-        const diff = wrappedDelta(position, i);
-        styleSlide(slide, diff);
-      });
-      // Mark whichever slide is nearest to center as interactive/active
-      const nearestIndex = wrap(Math.round(position));
-      slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === nearestIndex);
+        let diff = i - current;
+        if (diff > total / 2) diff -= total;
+        if (diff < -total / 2) diff += total;
+
+        slide.classList.remove('active', 'prev', 'next', 'far');
+        if (diff === 0) slide.classList.add('active');
+        else if (diff === -1) slide.classList.add('prev');
+        else if (diff === 1) slide.classList.add('next');
+        else slide.classList.add('far');
       });
     }
 
-    function tick() {
-      const delta = wrappedDelta(position, targetPosition);
-
-      // Spring toward the target, then damp the velocity. This keeps the
-      // movement continuous and gives it a natural "glide to rest".
-      if (!reduceMotion) {
-        velocity += delta * SPRING;
-        velocity *= DAMPING;
-
-        // Prevent tiny floating-point motion from keeping the carousel alive.
-        if (Math.abs(delta) < 0.0004 && Math.abs(velocity) < 0.0004) {
-          position = targetPosition;
-          velocity = 0;
-        } else {
-          position = wrap(position + velocity);
-        }
-      } else {
-        position = targetPosition;
-      }
-
+    function go(direction) {
+      if (isAnimating) return;
+      isAnimating = true;
+      current = (current + direction + total) % total;
       render();
-      requestAnimationFrame(tick);
+      setTimeout(() => { isAnimating = false; }, 1100);
     }
 
-    // --- Input handling: all inputs just move targetPosition.
-    // The animation loop above handles turning that into smooth motion. ---
-
-    let settleTimer = null;
-    function scheduleSettle() {
-      clearTimeout(settleTimer);
-      settleTimer = setTimeout(() => {
-        // Once scrolling pauses, snap the target to the nearest whole
-        // slide so it comes to rest centered rather than mid-way.
-        targetPosition = wrap(Math.round(targetPosition));
-      }, 90);
-    }
-
-    const carouselEl = document.getElementById('carousel');
-
-    // Mouse wheel / trackpad — deltaY is added straight into a
-    // continuous target, so a light scroll nudges partway and a firm
-    // scroll carries further, just like Apple's scroll-driven pages.
-    carouselEl.addEventListener('wheel', (e) => {
+    let wheelCooldown = false;
+    document.getElementById('carousel').addEventListener('wheel', (e) => {
       e.preventDefault();
-      targetPosition = targetPosition + e.deltaY * 0.0030;
-      scheduleSettle();
+      if (wheelCooldown) return;
+      if (Math.abs(e.deltaY) < 8) return;
+      wheelCooldown = true;
+      go(e.deltaY > 0 ? 1 : -1);
+      setTimeout(() => { wheelCooldown = false; }, 1100);
     }, { passive: false });
 
-    // Keyboard: nudge target by a whole slide; the loop eases into it
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown') { targetPosition += 1; scheduleSettle(); }
-      if (e.key === 'ArrowUp') { targetPosition -= 1; scheduleSettle(); }
+      if (e.key === 'ArrowDown') go(1);
+      if (e.key === 'ArrowUp') go(-1);
     });
 
-    // Touch swipe — drag directly maps to fractional position for a
-    // 1:1 "follow your finger" feel, then eases/snaps on release
     let touchStartY = null;
-    let touchStartTarget = 0;
+    const carouselEl = document.getElementById('carousel');
     carouselEl.addEventListener('touchstart', (e) => {
       touchStartY = e.touches[0].clientY;
-      touchStartTarget = targetPosition;
     }, { passive: true });
-    carouselEl.addEventListener('touchmove', (e) => {
+    carouselEl.addEventListener('touchend', (e) => {
       if (touchStartY === null) return;
-      const delta = touchStartY - e.touches[0].clientY;
-      targetPosition = touchStartTarget + delta * 0.0065;
-    }, { passive: true });
-    carouselEl.addEventListener('touchend', () => {
+      const delta = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 40) go(delta > 0 ? 1 : -1);
       touchStartY = null;
-      scheduleSettle();
     });
 
     render();
-    requestAnimationFrame(tick);
   </script>
 
 </body>
