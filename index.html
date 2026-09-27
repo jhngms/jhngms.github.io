@@ -61,6 +61,52 @@
     font-size: 0.95rem;
   }
 
+
+  /* ---- Top-left site navigation ---- */
+  .site-nav {
+    position: fixed;
+    top: 3rem;
+    left: 1rem;
+    transform: translateY(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
+
+  .site-nav a {
+    width: 54px;
+    height: 54px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 0;
+    text-decoration: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .site-nav a img {
+    display: block;
+    width: 31px;
+    height: 31px;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  .site-nav a:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  .site-nav a:focus-visible {
+    outline: 1px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 5px;
+  }
+
   /* Liquid-chrome pause/play control in the top-right corner. */
   .play-toggle {
     position: fixed;
@@ -225,6 +271,16 @@
 </style>
 </head>
 <body>
+
+  <nav class="site-nav" aria-label="Site navigation">
+    <a href="index.html" aria-label="Home" title="Home">
+      <img src="assets/home-chrome.png" alt="">
+    </a>
+    <a href="about.html" aria-label="About me" title="About me">
+      <img src="assets/info-chrome.png" alt="">
+    </a>
+  </nav>
+
 
   <button class="play-toggle" id="playToggle" type="button" aria-label="Pause slideshow" title="Pause slideshow">
     <img id="playToggleIcon" src="assets/pause-chrome.png" alt="">

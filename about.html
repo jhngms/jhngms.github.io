@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>about — jack gomes</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    color-scheme: light;
+    --cream: rgb(247,243,232);
+    --brown: #4a2f24;
+    --text: #f0ece2;
+    --muted: #b7b0a1;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    min-height: 100vh;
+    font-family: var(--font);
+    background: #000 url('assets/background.png') center/cover no-repeat fixed;
+    color: var(--text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-transform: lowercase;
+    padding: 0 1.5rem 4rem;
+  }
+
+  /* Navigation */
+  .site-nav {
+    position: fixed;
+    top: 3rem;
+    left: 1rem;
+    transform: translateY(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: .15rem;
+  }
+
+  .site-nav a {
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    text-decoration: none;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+
+  .site-nav a img {
+    display: block;
+    width: 31px;
+    height: 31px;
+    object-fit: contain;
+  }
+
+  .site-nav a:hover {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  .site-nav a:focus-visible {
+    outline: 1px solid rgba(255,255,255,.8);
+    outline-offset: 5px;
+  }
+
+  /* Main */
+  main {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 6rem;
+  }
+
+  /* About box */
+  .about-card {
+    width: min(760px, 92vw);
+    background: var(--cream);
+    color: var(--brown);
+    padding: clamp(2.5rem, 5vw, 4rem);
+    box-shadow: 0 20px 50px rgba(0,0,0,.65);
+    border: 4px solid var(--cream);
+  }
+
+  /* Heading */
+  h1 {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: -.03em;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Body text */
+  p {
+    font-size: 1rem;
+    line-height: 1.75;
+    max-width: none;
+    text-align: justify;
+  }
+
+  /* Second paragraph */
+  .personal {
+    margin-top: 1.5rem;
+  }
+
+  /* Back link */
+  .back {
+    display: inline-block;
+    margin-top: 2rem;
+    color: var(--brown);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+  }
+
+  .back:hover {
+    opacity: .65;
+  }
+
+  /* Mobile */
+  @media (max-width:600px) {
+    .site-nav {
+      left: .5rem;
+    }
+
+    .site-nav a {
+      width: 48px;
+      height: 48px;
+    }
+
+    .site-nav a img {
+      width: 29px;
+      height: 29px;
+    }
+
+    main {
+      padding-top: 5rem;
+    }
+
+    .about-card {
+      padding: 2rem;
+    }
+  }
+
+  @media (prefers-color-scheme:dark) {
+    .about-card {
+      background: rgb(247,243,232) !important;
+      color: #4a2f24 !important;
+      border-color: rgb(247,243,232) !important;
+    }
+
+    .back {
+      color: #4a2f24 !important;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+  <nav class="site-nav" aria-label="Site navigation">
+    <a href="index.html" aria-label="Home" title="Home">
+      <img src="assets/home-chrome.png" alt="">
+    </a>
+
+    <a href="about.html" aria-label="About me" title="About me">
+      <img src="assets/info-chrome.png" alt="">
+    </a>
+  </nav>
+
+  <main>
+    <section class="about-card" aria-labelledby="about-title">
+
+      <h1 id="about-title">about me</h1>
+
+      <p>
+        Professionally, I am a mechanical engineer with a bachelor's and
+        master's degree in mechanical engineering. In my master's program, I
+        focused on computational modeling and simulation. In my day-to-day, I
+        use computational fluid dynamics (CFD) to analyze components of jet
+        engines. Below is a very simple example I made for a CFD course at UConn. this quick exercise demonstrates the differences in resolution between two models.
+      </p>
+
+      <p class="personal">
+        Though, life is more important than work. I enjoy doing pretty much
+        anything with friends and loved ones. Whether that is traveling, or
+        simply sitting around and chatting.
+      </p>
+
+      <a class="back" href="index.html">back to photos</a>
+
+    </section>
+  </main>
+
+</body>
+</html>
