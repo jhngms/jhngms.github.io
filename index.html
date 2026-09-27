@@ -38,7 +38,7 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     position: relative;
-    overflow: hidden; /* the carousel manages its own scrolling */
+    overflow-x: hidden; overflow-y: auto;
     text-transform: lowercase; /* renders everything on the page in lowercase */
   }
 
@@ -101,7 +101,7 @@
   }
 
   .site-title {
-    position: fixed; top: 2rem; left: 50%; transform: translate(-50%, -50%);
+    position: fixed; top: 2.25rem; left: 50%; transform: translate(-50%, -50%);
     z-index: 21; color: #f0ece2; font-size: 1.6rem; font-weight: 600;
     letter-spacing: -0.01em; white-space: nowrap; text-align: center; pointer-events: none;
   }
@@ -140,7 +140,7 @@
     align-items: center;
     justify-content: center;
     overflow: visible;
-    transform: translateY(70px);
+    transform: translateY(100px);
   }
 
   .slide {
@@ -180,7 +180,7 @@
   .slide .thumb img {
     display: block;
     max-width: 100%;
-    max-height: 62vh;
+    max-height: 54vh;
     width: auto;
     height: auto;
     object-fit: contain;
@@ -548,7 +548,7 @@
       const opacity = abs <= 1 ? 1 - 0.7 * abs : Math.max(0, 0.3 * (2 - abs));
       // Keep the animation on transform + opacity only. Blur is visually nice,
       // but continuously blurring multiple large photos can make scrolling hitch.
-      const translateY = diff * 68;
+      const translateY = diff * 58;
 
       slide.style.transform = `translate3d(0, ${translateY}%, 0) scale(${scale})`;
       slide.style.opacity = opacity;
