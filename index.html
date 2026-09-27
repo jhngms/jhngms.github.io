@@ -427,6 +427,36 @@
 
     const carouselEl = document.getElementById('carousel');
 
+    // --- Automatic slideshow ---
+    // Advance every 5 seconds. Hovering the photo pauses the timer.
+    const AUTOPLAY_DELAY = 5000;
+    let autoplayPaused = false;
+    let autoplayTimer = null;
+
+    function resetAutoplay() {
+      clearTimeout(autoplayTimer);
+      if (autoplayPaused) return;
+
+      autoplayTimer = setTimeout(() => {
+        targetPosition += 1;
+        scheduleSettle();
+        resetAutoplay();
+      }, AUTOPLAY_DELAY);
+    }
+
+    // Pause only when the mouse is actually over the photo.
+    slides.forEach((slide) => {
+      slide.addEventListener('mouseenter', () => {
+        autoplayPaused = true;
+        clearTimeout(autoplayTimer);
+      });
+
+      slide.addEventListener('mouseleave', () => {
+        autoplayPaused = false;
+        resetAutoplay();
+      });
+    });
+
     // Mouse wheel / trackpad — deltaY is added straight into a
     // continuous target, so a light scroll nudges partway and a firm
     // scroll carries further, just like Apple's scroll-driven pages.
@@ -434,12 +464,21 @@
       e.preventDefault();
       targetPosition = targetPosition + e.deltaY * 0.0030;
       scheduleSettle();
+      resetAutoplay();
     }, { passive: false });
 
     // Keyboard: nudge target by a whole slide; the loop eases into it
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown') { targetPosition += 1; scheduleSettle(); }
-      if (e.key === 'ArrowUp') { targetPosition -= 1; scheduleSettle(); }
+      if (e.key === 'ArrowDown') {
+        targetPosition += 1;
+        scheduleSettle();
+        resetAutoplay();
+      }
+      if (e.key === 'ArrowUp') {
+        targetPosition -= 1;
+        scheduleSettle();
+        resetAutoplay();
+      }
     });
 
     // Touch swipe — drag directly maps to fractional position for a
@@ -449,6 +488,7 @@
     carouselEl.addEventListener('touchstart', (e) => {
       touchStartY = e.touches[0].clientY;
       touchStartTarget = targetPosition;
+      clearTimeout(autoplayTimer);
     }, { passive: true });
     carouselEl.addEventListener('touchmove', (e) => {
       if (touchStartY === null) return;
@@ -458,10 +498,12 @@
     carouselEl.addEventListener('touchend', () => {
       touchStartY = null;
       scheduleSettle();
+      resetAutoplay();
     });
 
     render();
     requestAnimationFrame(tick);
+    resetAutoplay();
   </script>
 
 </body>
