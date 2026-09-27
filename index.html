@@ -109,7 +109,10 @@
 
   .slide {
     position: absolute;
-    width: min(760px, 92vw);
+    left: 50%;
+    top: 50%;
+    width: max-content;
+    max-width: 92vw;
     text-align: center;
     /* No CSS transition here on purpose — the JS animation loop below
        sets transform/opacity/filter every frame, continuously easing
@@ -490,7 +493,7 @@
       // but continuously blurring multiple large photos can make scrolling hitch.
       const translateY = diff * 68;
 
-      slide.style.transform = `translate3d(0, ${translateY}%, 0) scale(${scale})`;
+      slide.style.transform = `translate3d(-50%, calc(-50% + ${translateY}%), 0) scale(${scale})`;
       slide.style.opacity = opacity;
       slide.style.filter = 'none';
       slide.style.zIndex = abs < 0.5 ? 3 : abs < 1.5 ? 2 : 1;
