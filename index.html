@@ -3,160 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>jack_gomes</title>
+<title>My Photo Journal</title>
 
 <style>
-  /* ---- Basic reset ---- */
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
 
-  /*
-    ---- Fonts & colors ----
-    -apple-system pulls in San Francisco (macOS/iOS's default font)
-    automatically on Apple devices. The rest of the stack is just
-    sensible fallbacks for other operating systems.
-  */
   :root {
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --bg: #fafafa;
-    --surface: #ffffff;
-    --text: #1c1e21;
-    --muted: #767b83;
-    --accent: #2f6f5e;
-    --line: #e9e9ea;
+    --text: #332a1e;
+    --muted: #6e6650;
+    --accent: #3f5c44;
+    --line: #aca47a;
+  }
+
+  html, body {
+    height: 100%;
   }
 
   body {
     font-family: var(--font);
-    background: var(--bg);
+    background-color: #cbb691;
     color: var(--text);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow: hidden; /* the carousel manages its own scrolling */
   }
 
-  /* ---- Header ---- */
+  /* Fluid, blurred backdrop of earthy color blobs */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      radial-gradient(circle at 12% 15%, #f0d3ac 0%, transparent 42%),
+      radial-gradient(circle at 82% 8%, #d9985f 0%, transparent 48%),
+      radial-gradient(circle at 68% 68%, #5c3a25 0%, transparent 40%),
+      radial-gradient(circle at 15% 82%, #b96a37 0%, transparent 46%),
+      radial-gradient(circle at 92% 88%, #e3b988 0%, transparent 42%);
+    filter: blur(90px);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
   header {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 4rem 1.5rem 2.5rem;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2.25rem 1.5rem 0.5rem;
   }
 
   header h1 {
-    font-size: 1.9rem;
+    font-size: 1.6rem;
     font-weight: 600;
     letter-spacing: -0.01em;
   }
 
   header p {
     color: var(--muted);
-    margin-top: 0.4rem;
-    font-size: 1.05rem;
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
   }
 
-  /* ---- Feed grid ---- */
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 1.5rem 5rem;
-  }
-
-  .feed {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2.5rem 1.75rem;
-  }
-
-  @media (max-width: 640px) {
-    .feed {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .post {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .post .thumb {
-    aspect-ratio: 4 / 3;
+  /* ---- Vertical carousel ---- */
+  .carousel {
+    position: relative;
+    height: calc(100vh - 6rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
-    border-radius: 10px;
-    background: var(--surface);
   }
 
-  .post .thumb img {
+  .slide {
+    position: absolute;
+    width: min(520px, 82vw);
+    text-align: center;
+    transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease;
+    pointer-events: none;
+  }
+
+  .slide .thumb {
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(40, 30, 15, 0.25);
+  }
+
+  .slide .thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.35s ease;
   }
 
-  .post:hover .thumb img {
-    transform: scale(1.03);
+  .slide .caption {
+    margin-top: 0.9rem;
   }
 
-  .post .caption {
-    margin-top: 0.85rem;
-  }
-
-  .post .caption .date {
-    font-size: 0.8rem;
+  .slide .date {
+    font-size: 0.78rem;
     color: var(--muted);
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
   }
 
-  .post .caption .title {
-    font-size: 1.05rem;
+  .slide .title {
+    font-size: 1.15rem;
     font-weight: 600;
-    letter-spacing: -0.005em;
   }
 
-  .post .caption .excerpt {
+  /* Position states, applied by JS based on distance from the active slide */
+  .slide.active {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    z-index: 3;
+    pointer-events: auto;
+  }
+
+  .slide.prev {
+    transform: translateY(-72%) scale(0.72);
+    opacity: 0.35;
+    z-index: 2;
+  }
+
+  .slide.next {
+    transform: translateY(72%) scale(0.72);
+    opacity: 0.35;
+    z-index: 2;
+  }
+
+  .slide.far {
+    transform: translateY(0) scale(0.6);
+    opacity: 0;
+    z-index: 1;
+  }
+
+  .carousel-hint {
+    position: relative;
+    z-index: 2;
+    text-align: center;
     color: var(--muted);
-    font-size: 0.92rem;
-    margin-top: 0.3rem;
+    font-size: 0.8rem;
+    padding-bottom: 1rem;
   }
 
-  .post:hover .title {
-    color: var(--accent);
-  }
-
-  /* First post spans full width, like a featured entry */
-  .post.featured {
-    grid-column: 1 / -1;
-  }
-
-  .post.featured .thumb {
-    aspect-ratio: 16 / 7;
-  }
-
-  footer {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem 3rem;
-    border-top: 1px solid var(--line);
-    color: var(--muted);
-    font-size: 0.85rem;
+  @media (prefers-reduced-motion: reduce) {
+    .slide {
+      transition: none;
+    }
   }
 </style>
 </head>
 <body>
 
   <!--
-    HOW THIS TEMPLATE WORKS:
-    - <header> is your site title/intro.
-    - .feed is a CSS grid of photo posts. The first post has an extra
-      "featured" class that makes it span the full width — remove that
-      class if you'd rather every post be the same size.
-    - Duplicate an <a class="post"> block for each new photo you add.
-    - Later, point each href at its own post page (e.g. posts/first-frost.html)
-      instead of "#".
+    HOW THIS CAROUSEL WORKS:
+    - Each .slide is one photo post. Duplicate a .slide block to add more.
+    - JS below tracks a "current index" and gives every slide a class
+      (active / prev / next / far) based on how far it is from that index.
+      The CSS above turns those classes into position, size, and fade.
+    - Scroll the mouse wheel, swipe on mobile, or use the Up/Down arrow
+      keys to move through the photos. It loops endlessly in both directions.
   -->
 
   <header>
@@ -164,59 +177,112 @@
     <p>Photos and short notes from wherever I end up.</p>
   </header>
 
-  <main>
-    <div class="feed">
+  <div class="carousel" id="carousel">
 
-      <a href="#" class="post featured">
-        <div class="thumb">
-          <img src="https://placehold.co/1200x525?text=Your+Photo+Here" alt="Description of your photo">
-        </div>
-        <div class="caption">
-          <span class="date">September 27, 2026</span>
-          <span class="title">A morning walk by the river</span>
-          <p class="excerpt">Short note about the photo goes here — where it was taken, what you were thinking.</p>
-        </div>
-      </a>
-
-      <a href="#" class="post">
-        <div class="thumb">
-          <img src="https://placehold.co/600x450?text=Your+Photo+Here" alt="Description of your photo">
-        </div>
-        <div class="caption">
-          <span class="date">September 20, 2026</span>
-          <span class="title">Old bookshop on Elm Street</span>
-          <p class="excerpt">Another short caption. Duplicate this whole block for each new photo.</p>
-        </div>
-      </a>
-
-      <a href="#" class="post">
-        <div class="thumb">
-          <img src="https://placehold.co/600x450?text=Your+Photo+Here" alt="Description of your photo">
-        </div>
-        <div class="caption">
-          <span class="date">September 12, 2026</span>
-          <span class="title">First frost</span>
-          <p class="excerpt">Keep captions short and consistent — it makes the feed feel like one voice.</p>
-        </div>
-      </a>
-
-      <a href="#" class="post">
-        <div class="thumb">
-          <img src="https://placehold.co/600x450?text=Your+Photo+Here" alt="Description of your photo">
-        </div>
-        <div class="caption">
-          <span class="date">September 5, 2026</span>
-          <span class="title">Late light on the porch</span>
-          <p class="excerpt">One more example post to show how the grid fills in.</p>
-        </div>
-      </a>
-
+    <div class="slide" data-title="A morning walk by the river">
+      <div class="thumb">
+        <img src="photos/morning-walk.jpg" alt="A morning walk by the river">
+      </div>
+      <div class="caption">
+        <span class="date">September 27, 2026</span>
+        <span class="title">A morning walk by the river</span>
+      </div>
     </div>
-  </main>
 
-  <footer>
-    &copy; 2026 Your Name. Built by hand.
-  </footer>
+    <div class="slide" data-title="Old bookshop on Elm Street">
+      <div class="thumb">
+        <img src="photos/bookshop.jpg" alt="Old bookshop on Elm Street">
+      </div>
+      <div class="caption">
+        <span class="date">September 20, 2026</span>
+        <span class="title">Old bookshop on Elm Street</span>
+      </div>
+    </div>
+
+    <div class="slide" data-title="First frost">
+      <div class="thumb">
+        <img src="photos/first-frost.jpg" alt="First frost">
+      </div>
+      <div class="caption">
+        <span class="date">September 12, 2026</span>
+        <span class="title">First frost</span>
+      </div>
+    </div>
+
+    <div class="slide" data-title="Late light on the porch">
+      <div class="thumb">
+        <img src="photos/porch-light.jpg" alt="Late light on the porch">
+      </div>
+      <div class="caption">
+        <span class="date">September 5, 2026</span>
+        <span class="title">Late light on the porch</span>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="carousel-hint">Scroll, swipe, or use ↑ / ↓ to browse</p>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const total = slides.length;
+    let current = 0;
+    let isAnimating = false;
+
+    function render() {
+      slides.forEach((slide, i) => {
+        // shortest circular distance from this slide to the current one
+        let diff = i - current;
+        if (diff > total / 2) diff -= total;
+        if (diff < -total / 2) diff += total;
+
+        slide.classList.remove('active', 'prev', 'next', 'far');
+        if (diff === 0) slide.classList.add('active');
+        else if (diff === -1) slide.classList.add('prev');
+        else if (diff === 1) slide.classList.add('next');
+        else slide.classList.add('far');
+      });
+    }
+
+    function go(direction) {
+      if (isAnimating) return;
+      isAnimating = true;
+      current = (current + direction + total) % total;
+      render();
+      setTimeout(() => { isAnimating = false; }, 550); // matches CSS transition time
+    }
+
+    // Mouse wheel / trackpad
+    let wheelCooldown = false;
+    document.getElementById('carousel').addEventListener('wheel', (e) => {
+      e.preventDefault();
+      if (wheelCooldown) return;
+      wheelCooldown = true;
+      go(e.deltaY > 0 ? 1 : -1);
+      setTimeout(() => { wheelCooldown = false; }, 550);
+    }, { passive: false });
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') go(1);
+      if (e.key === 'ArrowUp') go(-1);
+    });
+
+    // Touch swipe
+    let touchStartY = null;
+    const carouselEl = document.getElementById('carousel');
+    carouselEl.addEventListener('touchstart', (e) => {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    carouselEl.addEventListener('touchend', (e) => {
+      if (touchStartY === null) return;
+      const delta = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 40) go(delta > 0 ? 1 : -1);
+      touchStartY = null;
+    });
+
+    render();
+  </script>
 
 </body>
 </html>
