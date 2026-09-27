@@ -62,10 +62,44 @@
   }
 
 
+  .top-banner-title {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #f0ece2;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+
+  /* ---- Brown gradient top banner ---- */
+  .top-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(
+      to bottom,
+      #24140f 0%,
+      #24140f 35%,
+      rgba(74, 47, 36, 0.95) 50%,
+      rgba(74, 47, 36, 0.65) 68%,
+      rgba(74, 47, 36, 0.25) 85%,
+      rgba(74, 47, 36, 0) 100%
+    );
+    z-index: 10;
+    pointer-events: none;
+  }
+
   /* ---- Top-left site navigation ---- */
   .site-nav {
     position: fixed;
-    top: 3rem;
+    top: 2rem;
     left: 1rem;
     transform: translateY(-50%);
     z-index: 20;
@@ -91,8 +125,8 @@
 
   .site-nav a img {
     display: block;
-    width: 31px;
-    height: 31px;
+    width: 22px;
+    height: 22px;
     object-fit: contain;
     pointer-events: none;
   }
@@ -110,7 +144,7 @@
   /* Liquid-chrome pause/play control in the top-right corner. */
   .play-toggle {
     position: fixed;
-    top: 3rem;
+    top: 2rem;
     right: 1rem;
     transform: translateY(-50%);
     z-index: 20;
@@ -129,8 +163,8 @@
 
   .play-toggle img {
     display: block;
-    width: 31px;
-    height: 31px;
+    width: 22px;
+    height: 22px;
     object-fit: contain;
     pointer-events: none;
   }
@@ -218,7 +252,7 @@
   .slide .title {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #4a2f24;
+    color: #24140f;
     text-align: left;
     white-space: nowrap;
     overflow: hidden;
@@ -230,7 +264,7 @@
     flex: 0 0 auto;
     font-size: 0.82rem;
     font-weight: 500;
-    color: #4a2f24;
+    color: #24140f;
     text-align: right;
     white-space: nowrap;
   }
@@ -264,13 +298,17 @@
 
     .slide .title,
     .slide .date {
-      color: #4a2f24 !important;
+      color: #24140f !important;
     }
   }
 
 </style>
 </head>
 <body>
+
+  <div class="top-banner" aria-hidden="true">
+    <div class="top-banner-title">jack gomes</div>
+  </div>
 
   <nav class="site-nav" aria-label="Site navigation">
     <a href="index.html" aria-label="Home" title="Home">
@@ -303,11 +341,6 @@
     before uploading (Preview on Mac, or squoosh.app, do this in seconds).
     That alone fixes most "laggy transition" issues.
   -->
-
-  <header>
-    <h1>jack gomes</h1>
-    <p>photos over the years, in no particular order</p>
-  </header>
 
   <div class="carousel" id="carousel">
 
