@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" id="theme-color-meta" content="#f7f3e8">
-<meta name="theme-color" id="dynamic-theme-color" content="#f7f3e8">
 <title>jack_gomes</title>
 
 <script>
@@ -34,22 +33,7 @@
       // Apply the saved darkness setting before first paint (no flash).
   try { if (localStorage.getItem('darkness') === '1') document.documentElement.classList.add('darkness'); } catch (e) {}
 </script>
-
-<script>
-  // Keep the browser's top/bottom chrome in sync with the site's darkness mode.
-  function updateBrowserThemeColor() {
-    const themeColor = document.getElementById('theme-color-meta');
-    if (themeColor) {
-      themeColor.content = document.documentElement.classList.contains('darkness')
-        ? '#000000'
-        : '#f7f3e8';
-    }
-  }
-
-  updateBrowserThemeColor();
-</script>
-
-<link rel="icon"  type="image/png" href="assets/favicon.png">
+<link rel="icon" type="image/png" href="assets/favicon.png">
 <style>
   * {
     box-sizing: border-box;
@@ -74,7 +58,7 @@
 
   body {
     font-family: var(--font);
-    background-color: #000000;
+    background-color: var(--page-background);
     color: var(--text);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -193,12 +177,12 @@
      Photos, header, and buttons remain otherwise unchanged. */
 
   :root {
-    --page-background: url('assets/background_light.png');
+    --page-background: #f7f3e8;
     --title-color: #4a2f24;
   }
 
   html.darkness {
-    --page-background: url('assets/background_dark.png');
+    --page-background: #000000;
     --title-color: #f0ece2;
   }
 
@@ -206,9 +190,9 @@
     content: "";
     position: fixed;
     inset: 0;
-    background: var(--page-background) center / cover no-repeat;
+    background: var(--page-background);
     opacity: 1;
-    transition: opacity .5s ease;
+    transition: background-color .2s ease, opacity .5s ease;
     pointer-events: none;
     z-index: -1;
   }
@@ -399,7 +383,8 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: rgb(247,243,232);
+    background: var(--page-background);
+    color: var(--title-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -414,7 +399,7 @@
   }
 
   .loader-text {
-    color: #4a2f24;
+    color: var(--title-color);
     font-size: 1.2rem;
     font-weight: 600;
     letter-spacing: .02em;
@@ -935,12 +920,23 @@
       darkToggle.setAttribute('aria-pressed', String(on));
     }
 
+    function updateBrowserThemeColor() {
+      const themeColor = document.getElementById('theme-color-meta');
+      if (themeColor) {
+        themeColor.content = rootEl.classList.contains('darkness')
+          ? '#000000'
+          : '#f7f3e8';
+      }
+    }
+
     darkToggle.addEventListener('click', () => {
       const on = rootEl.classList.toggle('darkness');
       updateBrowserThemeColor();
       try { localStorage.setItem('darkness', on ? '1' : '0'); } catch (e) {}
       updateDarkButton();
     });
+
+    updateBrowserThemeColor();
 
     updateDarkButton();
 
