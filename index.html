@@ -101,7 +101,7 @@
   }
 
   .site-title {
-    position: fixed; top: 2.25rem; left: 50%; transform: translate(-50%, -50%);
+    position: fixed; top: 2rem; left: 50%; transform: translate(-50%, -50%);
     z-index: 21; color: #f0ece2; font-size: 1.6rem; font-weight: 600;
     letter-spacing: -0.01em; white-space: nowrap; text-align: center; pointer-events: none;
   }
@@ -140,11 +140,12 @@
     align-items: center;
     justify-content: center;
     overflow: visible;
-    transform: translateY(100px);
+    transform: translateY(-50px);
   }
 
   .slide {
     position: absolute;
+    left: 50%;
     width: min(760px, 92vw);
     text-align: center;
     /* No CSS transition here on purpose — the JS animation loop below
@@ -533,34 +534,94 @@
     function styleSlide(slide, diff) {
       const abs = Math.min(Math.abs(diff), 2);
 
-      // Slides more than ~2.4 steps away are fully invisible anyway —
-      // remove them from rendering entirely instead of still animating
-      // filter/transform on them every frame. This cuts the number of
-      // elements the browser has to composite+blur each frame roughly
-      // in half on a 12-photo carousel.
+      // Show the center image plus the two images before and after it.
       if (Math.abs(diff) > 2.4) {
         slide.style.display = 'none';
         return;
       }
       slide.style.display = '';
 
-      const scale = abs <= 1 ? 1 - 0.5 * abs : 0.5 - 0.1 * (abs - 1);
-      const opacity = abs <= 1 ? 1 - 0.7 * abs : Math.max(0, 0.3 * (2 - abs));
-      // Keep the animation on transform + opacity only. Blur is visually nice,
-      // but continuously blurring multiple large photos can make scrolling hitch.
-      const translateY = diff * 58;
+      // Center = full size, first neighbors = medium, second neighbors = smaller.
+      const scale =
+        abs <= 1
+          ? 1 - 0.5 * abs
+          : 0.5 - 0.15 * (abs - 1);
 
-      slide.style.transform = `translate3d(0, ${translateY}%, 0) scale(${scale})`;
+      const opacity =
+        abs <= 1
+          ? 1 - 0.65 * abs
+          : Math.max(0.12, 0.35 - 0.23 * (abs - 1));
+
+      // The vertical position is calculated in render() so the edges of
+      // neighboring cards stay anchored to the center of the active card.
+      slide.dataset.scale = scale;
+      slide.style.transformOrigin = 'center center';
       slide.style.opacity = opacity;
-      slide.style.filter = `blur(${Math.min(abs * 4, 4)}px)`;
-      slide.style.zIndex = abs < 0.5 ? 3 : abs < 1.5 ? 2 : 1;
+      slide.style.filter = `blur(${Math.min(abs * 4, 7)}px)`;
+      slide.style.zIndex = abs < 0.5 ? 5 : abs < 1.5 ? 4 : 3;
     }
 
     function render() {
+      const centerY = carouselEl.clientHeight / 2;
+      const visible = [];
+
       slides.forEach((slide, i) => {
         const diff = wrappedDelta(position, i);
         styleSlide(slide, diff);
+
+        if (Math.abs(diff) <= 2.4) {
+          visible.push({
+            slide,
+            diff,
+            abs: Math.abs(diff),
+            height: slide.offsetHeight * parseFloat(slide.dataset.scale || 1)
+          });
+        }
       });
+
+      // Place the active card exactly at the carousel center.
+      const centerItem = visible.find(item => Math.abs(item.diff) < 0.5);
+      if (centerItem) {
+        const h0 = centerItem.height;
+        centerItem.slide.style.top = `${centerY - h0 / 2}px`;
+        centerItem.slide.style.transform =
+          'translate3d(-50%, 0, 0) scale(' + centerItem.slide.dataset.scale + ')';
+
+        // First previous: its bottom touches the active card's center.
+        const prev1 = visible.find(item => item.diff < -0.5 && item.diff > -1.5);
+        if (prev1) {
+          prev1.slide.style.top = `${centerY - prev1.height}px`;
+          prev1.slide.style.transform =
+            'translate3d(-50%, 0, 0) scale(' + prev1.slide.dataset.scale + ')';
+        }
+
+        // Second previous: its bottom touches the center of the first previous.
+        const prev2 = visible.find(item => item.diff <= -1.5);
+        if (prev2) {
+          prev2.slide.style.top =
+            `${centerY - prev1.height / 2 - prev2.height}px`;
+          prev2.slide.style.transform =
+            'translate3d(-50%, 0, 0) scale(' + prev2.slide.dataset.scale + ')';
+        }
+
+        // First next: its top starts at the active card's center.
+        const next1 = visible.find(item => item.diff > 0.5 && item.diff < 1.5);
+        if (next1) {
+          next1.slide.style.top = `${centerY}px`;
+          next1.slide.style.transform =
+            'translate3d(-50%, 0, 0) scale(' + next1.slide.dataset.scale + ')';
+        }
+
+        // Second next: its top starts at the center of the first next.
+        const next2 = visible.find(item => item.diff >= 1.5);
+        if (next2) {
+          next2.slide.style.top =
+            `${centerY + next1.height / 2}px`;
+          next2.slide.style.transform =
+            'translate3d(-50%, 0, 0) scale(' + next2.slide.dataset.scale + ')';
+        }
+      }
+
       // Mark whichever slide is nearest to center as interactive/active
       const nearestIndex = wrap(Math.round(position));
       slides.forEach((slide, i) => {
