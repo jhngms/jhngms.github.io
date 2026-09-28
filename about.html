@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>about_me</title>
 
+<script>
+  // Apply the saved darkness setting before first paint (no flash).
+  try { if (localStorage.getItem('darkness') === '1') document.documentElement.classList.add('darkness'); } catch (e) {}
+</script>
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <style>
   * {
@@ -30,7 +34,7 @@
   body {
     min-height: 100vh;
     font-family: var(--font);
-    background: #000 url('assets/background2.png') center/cover no-repeat fixed;
+    background-color: #000000;
     color: var(--text);
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -108,6 +112,55 @@
   .site-nav a:focus-visible {
     outline: 1px solid rgba(255,255,255,.8);
     outline-offset: 5px;
+  }
+
+  /* ---- Darkness mode ----
+     Background image sits on its own layer behind everything; darkness mode
+     fades it out so the solid #000000 body color shows. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url('assets/background2.png') center / cover no-repeat;
+    opacity: 1;
+    transition: opacity .5s ease;
+    pointer-events: none;
+    z-index: -1;
+  }
+  html.darkness body::before { opacity: 0; }
+
+  .dark-toggle {
+    position: fixed;
+    top: 2.25rem;
+    right: 1rem;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 54px;
+    height: 54px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    line-height: 0;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+
+  .dark-toggle img {
+    display: block;
+    width: 31px;
+    height: 31px;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  .dark-toggle:hover { transform: translateY(-50%) scale(1.05); opacity: 1; }
+  .dark-toggle:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    body::before { transition: none; }
   }
 
   /* Main */
@@ -233,6 +286,17 @@
       height: 29px;
     }
 
+    .dark-toggle {
+      right: .5rem;
+      width: 48px;
+      height: 48px;
+    }
+
+    .dark-toggle img {
+      width: 29px;
+      height: 29px;
+    }
+
     main {
       padding-top: 5rem;
     }
@@ -301,6 +365,30 @@
 
     </section>
   </main>
+
+  <script>
+    // --- Darkness mode (shared with index.html via localStorage) ---
+    const darkToggle = document.getElementById('darkToggle');
+    const darkToggleIcon = document.getElementById('darkToggleIcon');
+    const rootEl = document.documentElement;
+
+    function updateDarkButton() {
+      const on = rootEl.classList.contains('darkness');
+      darkToggleIcon.src = on ? 'assets/sun-chrome.png' : 'assets/moon-chrome.png';
+      const label = on ? 'Turn off darkness mode' : 'Turn on darkness mode';
+      darkToggle.setAttribute('aria-label', label);
+      darkToggle.setAttribute('title', label);
+      darkToggle.setAttribute('aria-pressed', String(on));
+    }
+
+    darkToggle.addEventListener('click', () => {
+      const on = rootEl.classList.toggle('darkness');
+      try { localStorage.setItem('darkness', on ? '1' : '0'); } catch (e) {}
+      updateDarkButton();
+    });
+
+    updateDarkButton();
+  </script>
 
 </body>
 </html>
