@@ -569,62 +569,126 @@
       return ((n % total) + total) % total;
     }
 
-    function styleSlide(slide, diff) {
-      const abs = Math.min(Math.abs(diff), 2);
+    // The carousel uses a true overlapping stack:
+    // the top edge of each following image begins halfway down
+    // the image in front of it. Five images are kept visible in
+    // each direction and all background images stay fully opaque.
+    function stackScale(abs) {
+      return Math.max(0.50, 1 - 0.10 * abs);
+    }
 
-      // Show the center image plus the two images before and after it.
-      if (Math.abs(diff) > 2.4) {
+    function thumbHeight(index) {
+      const thumb = slides[index]?.querySelector('.thumb');
+      return thumb ? thumb.offsetHeight : 0;
+    }
+
+    function stackOffsetForInteger(activeIndex, relativeIndex) {
+      // Returns the TOP position of a card relative to the center of
+      // the active card. A positive relativeIndex moves downward.
+      const activeHeight = thumbHeight(activeIndex) * stackScale(0);
+      let top = -activeHeight / 2;
+
+      if (relativeIndex > 0) {
+        for (let n = 1; n <= relativeIndex; n++) {
+          const previousIndex = wrap(activeIndex + n - 1);
+          const previousHeight =
+            thumbHeight(previousIndex) * stackScale(n - 1);
+          top += previousHeight / 2;
+        }
+      } else if (relativeIndex < 0) {
+        for (let n = -1; n >= relativeIndex; n--) {
+          const previousIndex = wrap(activeIndex + n);
+          const previousHeight =
+            thumbHeight(previousIndex) * stackScale(Math.abs(n));
+          top -= previousHeight / 2;
+        }
+      }
+
+      return top;
+    }
+
+    function stackTopForDiff(activeIndex, diff) {
+      const maxStack = 5;
+      const clamped = Math.max(-maxStack, Math.min(maxStack, diff));
+
+      if (Math.abs(clamped) < 0.0001) {
+        return stackOffsetForInteger(activeIndex, 0);
+      }
+
+      const direction = clamped > 0 ? 1 : -1;
+      const distance = Math.abs(clamped);
+      const lower = Math.floor(distance);
+      const fraction = distance - lower;
+
+      const a = direction * lower;
+      const b = direction * Math.min(lower + 1, maxStack);
+
+      const topA = stackOffsetForInteger(activeIndex, a);
+      const topB = stackOffsetForInteger(activeIndex, b);
+
+      return topA + (topB - topA) * fraction;
+    }
+
+    function styleSlide(slide, diff) {
+      const abs = Math.abs(diff);
+
+      // Keep the current image plus the next five stacked images
+      // visible. The previous five remain above the current image
+      // so the carousel can loop continuously in either direction.
+      if (abs > 5.15) {
         slide.style.display = 'none';
         return;
       }
+
       slide.style.display = '';
 
-      // Center = full size, first neighbors = medium, second neighbors = smaller.
-      const scale =
-        abs <= 1
-          ? 1 - 0.5 * abs
-          : 0.5 - 0.15 * (abs - 1);
+      const scale = stackScale(abs);
 
-      const opacity =
-        abs <= 1
-          ? 1 - 0.65 * abs
-          : Math.max(0.12, 0.35 - 0.23 * (abs - 1));
-
-      // The vertical position is calculated in render() so the edges of
-      // neighboring cards stay anchored to the center of the active card.
       slide.dataset.scale = scale;
+
+      // Keep the soft blur on the stacked photos behind the active image.
+      // Photos below the active image stay fully opaque; photos above it
+      // gradually fade away as they move out of view.
+      const blur = Math.min(abs * 4, 7);
+      slide.style.filter = `blur(${blur}px)`;
+
+      if (diff < 0) {
+        // Images above the active photo fade smoothly into nothing.
+        const fade = Math.max(0, 1 - abs / 1.8);
+        slide.style.opacity = String(fade);
+      } else {
+        // Images below the active photo remain opaque.
+        slide.style.opacity = '1';
+      }
+
       slide.style.transformOrigin = 'center center';
-      slide.style.opacity = opacity;
-      slide.style.filter = `blur(${Math.min(abs * 4, 7)}px)`;
-      slide.style.zIndex = abs < 0.5 ? 5 : abs < 1.5 ? 4 : 3;
+
+      // The active image sits above every card behind it.
+      slide.style.zIndex = String(20 - Math.round(abs));
     }
 
     function render() {
       const centerY = carouselEl.clientHeight / 2;
-
-      // Keep every slide on one continuous vertical track.
-      // This avoids the old layout re-positioning cards when the active
-      // slide changes, which could cause a visible jump with mixed photo sizes.
-      const SLOT = Math.min(carouselEl.clientHeight * 0.62, 560);
+      const activeIndex = wrap(Math.round(position));
 
       slides.forEach((slide, i) => {
         const diff = wrappedDelta(position, i);
         styleSlide(slide, diff);
 
-        if (Math.abs(diff) <= 2.4) {
+        if (Math.abs(diff) <= 5.15) {
           const scale = parseFloat(slide.dataset.scale || 1);
+          const topOffset = stackTopForDiff(activeIndex, diff);
 
-          slide.style.top = `${centerY}px`;
-          slide.style.transformOrigin = 'center center';
+          // Position from the TOP of the card rather than its center.
+          // This makes the next image begin halfway down the current one.
+          slide.style.top = `${centerY + topOffset}px`;
           slide.style.transform =
-            `translate3d(-50%, -50%, 0) translate3d(0, ${diff * SLOT}px, 0) scale(${scale})`;
+            `translate3d(-50%, 0, 0) scale(${scale})`;
         }
       });
 
-    // Mark whichever slide is nearest to center as interactive/active
-      const nearestIndex = wrap(Math.round(position));
       slides.forEach((slide, i) => {
-        slide.classList.toggle('active', i === nearestIndex);
+        slide.classList.toggle('active', i === activeIndex);
       });
     }
 
