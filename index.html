@@ -107,8 +107,14 @@
   }
 
   .site-nav {
-    position: fixed; top: 2.25rem; left: 1rem; transform: translateY(-50%);
-    z-index: 20; display: flex; align-items: center; gap: .15rem;
+    position: fixed;
+    top: 2.25rem;
+    left: 1rem;
+    transform: translateY(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: .15rem;
   }
 
   .site-nav a {
@@ -245,6 +251,27 @@
 
 
   /* Keep the photo border and info card the exact same cream in dark mode. */
+  /* Keep the navigation in exactly the same place on index.html and about.html,
+     including on phones. */
+  @media (max-width: 600px) {
+    .site-nav {
+      top: 2.25rem;
+      left: 1rem;
+      transform: translateY(-50%);
+      gap: .15rem;
+    }
+
+    .site-nav a {
+      width: 54px;
+      height: 54px;
+    }
+
+    .site-nav a img {
+      width: 31px;
+      height: 31px;
+    }
+  }
+
   @media (prefers-color-scheme: dark) {
     .slide .thumb,
     .slide .caption {
