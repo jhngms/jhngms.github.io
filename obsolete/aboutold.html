@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f7f3e8" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" id="theme-color-meta" content="#f7f3e8">
 <title>about_me</title>
 
 <script>
@@ -43,7 +42,21 @@
   } catch (e) {}
 </script>
 
-<link rel="icon" type="image/png" href="assets/favicon.png">
+<script>
+  // Keep the browser's top/bottom chrome in sync with the site's darkness mode.
+  function updateBrowserThemeColor() {
+    const themeColor = document.getElementById('theme-color-meta');
+    if (themeColor) {
+      themeColor.content = document.documentElement.classList.contains('darkness')
+        ? '#000000'
+        : '#f7f3e8';
+    }
+  }
+
+  updateBrowserThemeColor();
+</script>
+
+<link rel="icon"  type="image/png" href="assets/favicon.png">
 
 <style>
   * {
