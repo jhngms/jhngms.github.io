@@ -7,9 +7,15 @@
 
 <script>
   // Apply the saved darkness setting before first paint (no flash).
-  try { if (localStorage.getItem('darkness') === '1') document.documentElement.classList.add('darkness'); } catch (e) {}
+  try {
+    if (localStorage.getItem('darkness') === '1') {
+      document.documentElement.classList.add('darkness');
+    }
+  } catch (e) {}
 </script>
+
 <link rel="icon" type="image/png" href="assets/favicon.png">
+
 <style>
   * {
     box-sizing: border-box;
@@ -89,7 +95,9 @@
   }
 
   .site-nav a,
-  .site-nav button { pointer-events: auto; }
+  .site-nav button {
+    pointer-events: auto;
+  }
 
   .site-nav a {
     width: 54px;
@@ -120,12 +128,14 @@
     outline-offset: 5px;
   }
 
-  /* ---- Darkness mode ----
-     The mode is the same setting the home page saves ('darkness' in localStorage),
-     applied to <html> before first paint by the script in <head>. Light mode uses
-     background2-light.png; darkness mode uses background2.png. */
-  :root { --page-background: url('assets/background2-light.png'); }
-  html.darkness { --page-background: url('assets/background2.png'); }
+  /* ---- Darkness mode ---- */
+  :root {
+    --page-background: url('assets/background2-light.png');
+  }
+
+  html.darkness {
+    --page-background: url('assets/background2.png');
+  }
 
   body::before {
     content: "";
@@ -163,29 +173,41 @@
     pointer-events: none;
   }
 
-  .dark-toggle:hover { transform: translateY(-50%) scale(1.05); opacity: 1; }
-  .dark-toggle:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
+  .dark-toggle:hover {
+    transform: translateY(-50%) scale(1.05);
+    opacity: 1;
+  }
+
+  .dark-toggle:focus-visible {
+    outline: 1px solid rgba(255,255,255,.8);
+    outline-offset: 5px;
+  }
 
   /* Main */
   main {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 3rem;
     padding-top: 6rem;
+    padding-bottom: 4rem;
   }
 
-  /* About box */
+  /* Cards */
   .about-card {
     width: min(760px, 92vw);
     background: var(--cream);
     color: var(--brown);
     padding: clamp(0.5rem, 5vw, 4rem);
-    padding-bottom: 1.0rem;
+    padding-bottom: 0.5em;
     box-shadow: 0 20px 50px rgba(0,0,0,.65);
     border: 4px solid var(--cream);
   }
-
+  .about-card:first-child {
+    padding-bottom: 0rem;
+  }
   /* Heading */
   h1 {
     font-size: clamp(2.5rem, 5vw, 3.5rem);
@@ -203,44 +225,23 @@
     text-align: justify;
   }
 
-  /* Second paragraph */
+  /* Paragraph spacing */
   .personal {
     margin-top: 1.5rem;
   }
 
-  /* CFD Image Styling
-     `width` (not max-width) ties the rendered size directly to a
-     percentage of .about-card's inner width -- the text box -- so it
-     always scales with that width. `height: auto` then just follows
-     along to preserve the image's own aspect ratio; it never drives
-     the sizing itself. */
+  /* CFD Image Styling */
   .cfd-image {
     display: block;
     width: 90%;
     height: auto;
-    margin: 1.5rem auto; /* Centers the image and adds vertical spacing */
+    margin: 1.5rem auto;
 
-    /* Adds a border using your brown theme variable */
-    border: 4px solid var(--brown);
+    border: 1px solid var(--brown);
     border-radius: 0px;
   }
 
-  /* Back link */
-  .back {
-    display: inline-block;
-    margin-top: 2rem;
-    color: var(--brown);
-    font-weight: 600;
-    text-decoration: none;
-    border-bottom: 1px solid currentColor;
-  }
-
-  .back:hover {
-    opacity: .65;
-  }
-
-
-  /* Home button at the bottom center of the about card */
+  /* Home button */
   .home-bottom {
     display: flex;
     width: 90px;
@@ -271,6 +272,7 @@
 
   /* Mobile */
   @media (max-width:600px) {
+
     .site-title {
       top: 2rem;
       font-size: 1.6rem;
@@ -299,21 +301,19 @@
 
     main {
       padding-top: 5rem;
+      gap: 2rem;
     }
 
     .about-card {
       padding: 2rem;
     }
 
-    /* On narrow screens 60% of the text box gets pretty small --
-       let the image claim more of the available width there. */
     .cfd-image {
       width: 85%;
     }
   }
 
-
-  /* Nav icon buttons (buttons styled to match the nav links) */
+  /* Nav icon buttons */
   .site-nav button {
     width: 54px;
     height: 54px;
@@ -341,17 +341,32 @@
     height: 31px;
     object-fit: contain;
   }
-  .site-nav button:hover { transform: scale(1.05); opacity: 1; }
-  .site-nav button:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
 
-  /* Nav icons follow the mode: champagne "-light" icons in light mode (default),
-     original chrome icons in darkness mode. Both are in the DOM so the swap is instant. */
+  .site-nav button:hover {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  .site-nav button:focus-visible {
+    outline: 1px solid rgba(255,255,255,.8);
+    outline-offset: 5px;
+  }
+
+  /* Nav icons follow the mode */
   .site-nav img.icon-dark,
-  .home-bottom img.icon-dark { display: none; }
+  .home-bottom img.icon-dark {
+    display: none;
+  }
+
   html.darkness .site-nav img.icon-dark,
-  html.darkness .home-bottom img.icon-dark { display: block; }
+  html.darkness .home-bottom img.icon-dark {
+    display: block;
+  }
+
   html.darkness .site-nav img.icon-light,
-  html.darkness .home-bottom img.icon-light { display: none; }
+  html.darkness .home-bottom img.icon-light {
+    display: none;
+  }
 
   /* Image lightbox opened by the cat icon */
   .lightbox {
@@ -365,7 +380,11 @@
     padding: 1.5rem;
     cursor: zoom-out;
   }
-  .lightbox.open { display: flex; }
+
+  .lightbox.open {
+    display: flex;
+  }
+
   .lightbox img {
     max-width: 100%;
     max-height: 100%;
@@ -374,11 +393,20 @@
   }
 
   @media (max-width:600px) {
-    .site-nav button { width: 48px; height: 48px; }
-    .site-nav button img { width: 29px; height: 29px; }
+
+    .site-nav button {
+      width: 48px;
+      height: 48px;
+    }
+
+    .site-nav button img {
+      width: 29px;
+      height: 29px;
+    }
   }
 
   @media (prefers-color-scheme:dark) {
+
     .about-card {
       background: rgb(247,243,232) !important;
       color: #4a2f24 !important;
@@ -398,78 +426,171 @@
   <div class="site-title"> </div>
 
   <nav class="site-nav" aria-label="Links">
-    <a href="https://steamcommunity.com/id/J0AG/" target="_blank" rel="noopener" aria-label="Steam" title="Steam">
+
+    <a
+      href="https://steamcommunity.com/id/J0AG/"
+      target="_blank"
+      rel="noopener"
+      aria-label="Steam"
+      title="Steam"
+    >
       <img class="icon-light" src="assets/steam-light.png" alt="">
       <img class="icon-dark" src="assets/steam.png" alt="">
     </a>
 
-    <button type="button" id="catBtn" aria-label="Open image" title="Cat">
+    <button
+      type="button"
+      id="catBtn"
+      aria-label="Open image"
+      title="Cat"
+    >
       <img class="icon-light" src="assets/cat-light.png" alt="">
       <img class="icon-dark" src="assets/cat.png" alt="">
     </button>
-    
-    <a href="https://music.apple.com/profile/joag" target="_blank" rel="noopener" aria-label="Music" title="Music">
+
+    <a
+      href="https://music.apple.com/profile/joag"
+      target="_blank"
+      rel="noopener"
+      aria-label="Music"
+      title="Music"
+    >
       <img class="icon-light" src="assets/music-light.png" alt="">
       <img class="icon-dark" src="assets/music.png" alt="">
     </a>
 
   </nav>
 
-  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image">
-    <img id="lightboxImg" src="photos\dc30478b-6d19-4929-adb4-a29bc17f347e.jpg" alt="">
+  <div
+    class="lightbox"
+    id="lightbox"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Image"
+  >
+    <img
+      id="lightboxImg"
+      src="photos\dc30478b-6d19-4929-adb4-a29bc17f347e.jpg"
+      alt=""
+    >
   </div>
 
 
-
   <main>
+
+    <!-- ABOUT ME CARD -->
     <section class="about-card" aria-labelledby="about-title">
 
-      <h1 id="about-title">about me</h1>
+      <h1 id="about-title">personally, </h1>
 
       <p>
-        Hi, I enjoy doing pretty much
-        anything with friends and loved ones. Whether that is traveling, or
-        simply sitting around and chatting. I made this website because I wanted to have a carousel of my favorite photos.
-        My good friend nick told me he was building a personal website, as a means to replace social media. I thought this was a great idea (so i stole it).
+        Hi, I enjoy doing pretty much anything with friends and loved ones.
+        Whether that is traveling, or simply sitting around and chatting.
+        I made this website because I wanted to have a carousel of my favorite photos.
+        My good friend nick told me he was building a personal website, as a means
+        to replace social media. I thought this was a great idea (so i stole it).
       </p>
 
       <p class="personal">
-        in my free time, I enjoy working out. Lifting weights with the sole purpose of looking fit keeps me from an unhealthy life. 
+        in my free time, I enjoy working out. Lifting weights with the sole purpose
+        of looking fit keeps me from an unhealthy life.
         I also enjoy playing video games from time to time.
-         I get the utmost enjoyment in using a keyboard and mouse to arrange pixels in a specific orientation for the 
-         sole purpose of mildly upsetting a random person on the internet. <br><br>
+        I get the utmost enjoyment in using a keyboard and mouse to arrange pixels
+        in a specific orientation for the sole purpose of mildly upsetting a random
+        person on the internet.
       </p>
-
-      <p class="work">
-        Professionally, I am a mechanical engineer with a bachelor's and
-        master's degree in mechanical engineering. In my master's program, I
-        focused on computational modeling and simulation. In my day-to-day, I
-        use computational fluid dynamics (CFD) to analyze components/cavitives within jet
-        engines. <br> <br>
-
-        Below is a very simple example I made for a CFD course at UConn. Disturbances to air, such as the blockage in this pipe, cause turbulence.
-        Modeling turbulence is a complex task that requires significant computational resources.
-        This fun exercise demonstrates the differences in resolution between two models. Despite the fact that these two models were set up identically, it does not take an engineer to spot the differences in the results. 
-        One could describe my job as very educated guessing.
-      </p>
-
-      <img src="photos/Picture1.png" alt="CFD model resolution comparison" class="cfd-image">
-
-    <a class="home-bottom" href="index.html" aria-label="Home" title="Home">
-      <img class="icon-light" src="assets/home-chrome-light.png" alt="">
-      <img class="icon-dark" src="assets/home-chrome.png" alt="">
-    </a>
+      <a
+        class="home-bottom"
+        href="index.html"
+        aria-label="Home"
+        title="Home"
+      >
+      </a>
 
     </section>
+
+
+    <!-- WORK CARD -->
+    <section class="about-card work-card" aria-labelledby="work-title">
+
+      <h1 id="work-title">professionally, </h1>
+
+      <p>
+        I am a mechanical engineer with a bachelor's and
+        master's degree in mechanical engineering. In my master's program, I
+        focused on computational modeling and simulation. In my day-to-day, I
+        use computational fluid dynamics (CFD) to analyze components/cavities
+        within jet engines.
+      </p>
+
+      <p class="personal">
+        Below is a very simple example I made for a CFD course at UConn.
+        Disturbances to air, such as the blockage in this pipe, cause turbulence.
+        Modeling turbulence is a complex task that requires significant
+        computational resources. This fun exercise demonstrates the differences
+        in resolution between two models.
+        The black lines represent streamlines, the path of the fluid flow.
+        Despite the fact that these two models were set up identically,
+        it does not take an engineer to spot the differences in the results.<br><br>
+      </p>
+
+      <p>
+        <strong>i.</strong> Large Eddy Simulation (LES)
+      </p>
+
+      <img
+        src="photos/les.png"
+        alt="LES"
+        class="cfd-image"
+      >
+
+      <p>
+        <strong>ii.</strong> Unsteady Reynolds-Averaged Navier-Stokes (URANS)
+      </p>
+
+      <img
+        src="photos/urans.png"
+        alt="URANS"
+        class="cfd-image"
+      >
+      <p>
+        One could describe my job as very educated guessing :)
+      </p>
+      <a
+        class="home-bottom"
+        href="index.html"
+        aria-label="Home"
+        title="Home"
+      >
+        <img class="icon-light" src="assets/home-chrome-light.png" alt="">
+        <img class="icon-dark" src="assets/home-chrome.png" alt="">
+      </a>
+    </section>
+
   </main>
 
+
   <script>
+
     // --- Cat icon opens an image ---
+
     const catBtn = document.getElementById('catBtn');
     const lightbox = document.getElementById('lightbox');
-    catBtn.addEventListener('click', () => lightbox.classList.add('open'));
-    lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') lightbox.classList.remove('open'); });
+
+    catBtn.addEventListener('click', () => {
+      lightbox.classList.add('open');
+    });
+
+    lightbox.addEventListener('click', () => {
+      lightbox.classList.remove('open');
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        lightbox.classList.remove('open');
+      }
+    });
+
   </script>
 
 </body>
