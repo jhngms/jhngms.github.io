@@ -75,15 +75,21 @@
 
   /* Navigation */
   .site-nav {
-    position: fixed;
-    top: 2.25rem;
-    left: 1rem;
+    position: absolute;
+    top: 3.0rem;
+    left: 0;
+    right: 0;
     transform: translateY(-50%);
     z-index: 20;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: .15rem;
+    pointer-events: none;
   }
+
+  .site-nav a,
+  .site-nav button { pointer-events: auto; }
 
   .site-nav a {
     width: 54px;
@@ -272,9 +278,6 @@
       top: 2rem;
       font-size: 1.6rem;
     }
-    .site-nav {
-      left: .5rem;
-    }
 
     .site-nav a {
       width: 48px;
@@ -312,6 +315,63 @@
     }
   }
 
+
+  /* Nav icon buttons (buttons styled to match the nav links) */
+  .site-nav button {
+    width: 54px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    cursor: pointer;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+
+  .site-nav button img {
+    display: block;
+    width: 31px;
+    height: 31px;
+    object-fit: contain;
+  }
+  .site-nav button:hover { transform: scale(1.05); opacity: 1; }
+  .site-nav button:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
+
+  /* Image lightbox opened by the cat icon */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.85);
+    padding: 1.5rem;
+    cursor: zoom-out;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    box-shadow: 0 20px 50px rgba(0,0,0,.65);
+  }
+
+  @media (max-width:600px) {
+    .site-nav button { width: 48px; height: 48px; }
+    .site-nav button img { width: 29px; height: 29px; }
+  }
+
   @media (prefers-color-scheme:dark) {
     .about-card {
       background: rgb(247,243,232) !important;
@@ -331,6 +391,25 @@
   <div class="top-banner" aria-hidden="true"></div>
   <div class="site-title"> </div>
 
+  <nav class="site-nav" aria-label="Links">
+    <a href="https://steamcommunity.com/id/J0AG/" target="_blank" rel="noopener" aria-label="Steam" title="Steam">
+      <img src="assets/steam.png" alt="">
+    </a>
+
+    <button type="button" id="catBtn" aria-label="Open image" title="Cat">
+      <img src="assets/cat.png" alt="">
+    </button>
+    
+    <a href="https://music.apple.com/profile/joag" target="_blank" rel="noopener" aria-label="Music" title="Music">
+      <img src="assets/music.png" alt="">
+    </a>
+
+  </nav>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image">
+    <img id="lightboxImg" src="photos\dc30478b-6d19-4929-adb4-a29bc17f347e.jpg" alt="">
+  </div>
+
 
 
   <main>
@@ -346,16 +425,15 @@
       </p>
 
       <p class="work">
-        <br>
         Professionally, I am a mechanical engineer with a bachelor's and
         master's degree in mechanical engineering. In my master's program, I
         focused on computational modeling and simulation. In my day-to-day, I
-        use computational fluid dynamics (CFD) to analyze components/ cavitives within jet
+        use computational fluid dynamics (CFD) to analyze components/cavitives within jet
         engines. <br> <br>
 
         Below is a very simple example I made for a CFD course at UConn. Disturbances to air, such as the blockage in this pipe, cause turbulence.
         Modeling turbulence is a complex task that requires significant computational resources.
-        This fun exercise demonstrates the differences in resolution between two models. Despite the fact that these two models use identical boundary conditions, it does not take an engineer to spot the differences in the results:
+        This fun exercise demonstrates the differences in resolution between two models. Despite the fact that these two models were set up identically, it does not take an engineer to spot the differences in the results:
       </p>
 
       <img src="photos/Picture1.png" alt="CFD model resolution comparison" class="cfd-image">
@@ -368,27 +446,12 @@
   </main>
 
   <script>
-    // --- Darkness mode (shared with index.html via localStorage) ---
-    const darkToggle = document.getElementById('darkToggle');
-    const darkToggleIcon = document.getElementById('darkToggleIcon');
-    const rootEl = document.documentElement;
-
-    function updateDarkButton() {
-      const on = rootEl.classList.contains('darkness');
-      darkToggleIcon.src = on ? 'assets/sun-chrome.png' : 'assets/moon-chrome.png';
-      const label = on ? 'Turn off darkness mode' : 'Turn on darkness mode';
-      darkToggle.setAttribute('aria-label', label);
-      darkToggle.setAttribute('title', label);
-      darkToggle.setAttribute('aria-pressed', String(on));
-    }
-
-    darkToggle.addEventListener('click', () => {
-      const on = rootEl.classList.toggle('darkness');
-      try { localStorage.setItem('darkness', on ? '1' : '0'); } catch (e) {}
-      updateDarkButton();
-    });
-
-    updateDarkButton();
+    // --- Cat icon opens an image ---
+    const catBtn = document.getElementById('catBtn');
+    const lightbox = document.getElementById('lightbox');
+    catBtn.addEventListener('click', () => lightbox.classList.add('open'));
+    lightbox.addEventListener('click', () => lightbox.classList.remove('open'));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') lightbox.classList.remove('open'); });
   </script>
 
 </body>
