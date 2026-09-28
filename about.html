@@ -6,6 +6,14 @@
 <title>about_me</title>
 
 <script>
+
+    // --- Loading screen ---
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('loaded');
+      }, 700);
+    });
+
   // Apply the saved darkness setting before first paint (no flash).
   try {
     if (localStorage.getItem('darkness') === '1') {
@@ -420,10 +428,42 @@
       color: #4a2f24 !important;
     }
   }
+
+  /* Loading screen */
+  #loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgb(247,243,232);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .8s ease, visibility .8s ease;
+  }
+
+  #loader.loaded {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .loader-text {
+    color: #4a2f24;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
 </style>
 </head>
 
 <body>
+
+
+  <div id="loader" aria-label="Loading">
+    <div class="loader-text">loading...</div>
+  </div>
+
 
   <div class="top-banner" aria-hidden="true"></div>
   <div class="site-title"> </div>

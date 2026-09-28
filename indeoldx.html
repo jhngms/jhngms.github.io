@@ -6,30 +6,7 @@
 <title>jack_gomes</title>
 
 <script>
-    // --- Loading screen ---
-    window.addEventListener('DOMContentLoaded', () => {
-      const loader = document.getElementById('loader');
-      const loaderText = document.getElementById('loader-word');
-      const loadingWord = 'joag';
-      const keyDelays = [77, 228, 231];
-
-      let loadingIndex = 0;
-
-      function typeJoag() {
-        loaderText.textContent = loadingWord.slice(0, ++loadingIndex);
-
-        if (loadingIndex < loadingWord.length) {
-          setTimeout(typeJoag, keyDelays[loadingIndex - 1]);
-        } else {
-          setTimeout(() => {
-            loader.classList.add('loaded');
-          }, 350);
-        }
-      }
-
-      typeJoag();
-    });
-      // Apply the saved darkness setting before first paint (no flash).
+  // Apply the saved darkness setting before first paint (no flash).
   try { if (localStorage.getItem('darkness') === '1') document.documentElement.classList.add('darkness'); } catch (e) {}
 </script>
 <link rel="icon" type="image/png" href="assets/favicon.png">
@@ -107,21 +84,7 @@
     height: 55px;
     display: block;
   }
-  .loader-cursor {
-    display: inline-block;
-    margin-left: 2px;
-    animation: cursor-blink .7s steps(1) infinite;
-  }
 
-  @keyframes cursor-blink {
-    0%, 50% {
-      opacity: 1;
-    }
-
-    51%, 100% {
-      opacity: 0;
-    }
-}
   /* ---- Exact top ribbon styling ---- */
   .top-banner {
     position: fixed;
@@ -376,43 +339,9 @@
     }
   }
 
-
-  /* Loading screen */
-  #loader {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgb(247,243,232);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 1;
-    visibility: visible;
-    transition: opacity .8s ease, visibility .8s ease;
-  }
-
-  #loader.loaded {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  .loader-text {
-    color: #4a2f24;
-    font-size: 1.2rem;
-    font-weight: 600;
-    letter-spacing: .02em;
-  }
-
-
 </style>
 </head>
 <body>
-
-
-  <div id="loader" aria-label="Loading">
-    <div class="loader-text"><span id="loader-word"></span><span class="loader-cursor">|</span></div>
-  </div>
-
 
   <div class="top-banner" aria-hidden="true"></div>
   <div class="site-title">jack gomes</div>
