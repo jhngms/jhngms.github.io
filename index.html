@@ -103,7 +103,7 @@
 
   .site-title {
     position: fixed; top: 2rem; left: 50%; transform: translate(-50%, -50%);
-    z-index: 21; color: #f0ece2; font-size: 1.6rem; font-weight: 600;
+    z-index: 21; color: var(--title-color); font-size: 1.6rem; font-weight: 600;
     letter-spacing: -0.01em; white-space: nowrap; text-align: center; pointer-events: none;
   }
 
@@ -128,21 +128,36 @@
   .site-nav a:hover { transform: scale(1.05); opacity: 1; }
   .site-nav a:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
 
+  /* Info icon follows the mode: champagne "light" icon in light mode (default),
+     original chrome icon in darkness mode. Both are in the DOM so the swap is instant. */
+  .site-nav a img.info-icon-dark { display: none; }
+  html.darkness .site-nav a img.info-icon-dark { display: block; }
+  html.darkness .site-nav a img.info-icon-light { display: none; }
+
   /* ---- Darkness mode ----
-     The background image lives on its own layer BEHIND everything (z-index -1).
-     Darkness mode just fades that layer out, leaving the solid #000000 body
-     color showing. Photos, header and buttons are untouched. */
+     The background image switches between the light and dark versions.
+     Photos, header, and buttons remain otherwise unchanged. */
+
+  :root {
+    --page-background: url('assets/background_light.png');
+    --title-color: #4a2f24;
+  }
+
+  html.darkness {
+    --page-background: url('assets/background_dark.png');
+    --title-color: #f0ece2;
+  }
+
   body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background: url('assets/background2.png') center / cover no-repeat;
+    background: var(--page-background) center / cover no-repeat;
     opacity: 1;
     transition: opacity .5s ease;
     pointer-events: none;
     z-index: -1;
   }
-  html.darkness body::before { opacity: 0; }
 
   .dark-toggle {
     position: fixed; top: 2.25rem; right: 1rem; transform: translateY(-50%);
@@ -333,7 +348,8 @@
 
   <nav class="site-nav" aria-label="Site navigation">
     <a href="about.html" aria-label="About me" title="About me">
-      <img src="assets/info-chrome.png" alt="">
+      <img class="info-icon-light" src="assets/info-chrome-light.png" alt="">
+      <img class="info-icon-dark" src="assets/info-chrome.png" alt="">
     </a>
   </nav>
 

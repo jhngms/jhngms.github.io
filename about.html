@@ -121,19 +121,20 @@
   }
 
   /* ---- Darkness mode ----
-     Background image sits on its own layer behind everything; darkness mode
-     fades it out so the solid #000000 body color shows. */
+     The mode is the same setting the home page saves ('darkness' in localStorage),
+     applied to <html> before first paint by the script in <head>. Light mode uses
+     background2-light.png; darkness mode uses background2.png. */
+  :root { --page-background: url('assets/background2-light.png'); }
+  html.darkness { --page-background: url('assets/background2.png'); }
+
   body::before {
     content: "";
     position: fixed;
     inset: 0;
-    background: url('assets/background2.png') center / cover no-repeat;
-    opacity: 1;
-    transition: opacity .5s ease;
+    background: var(--page-background) center / cover no-repeat;
     pointer-events: none;
     z-index: -1;
   }
-  html.darkness body::before { opacity: 0; }
 
   .dark-toggle {
     position: fixed;
@@ -164,10 +165,6 @@
 
   .dark-toggle:hover { transform: translateY(-50%) scale(1.05); opacity: 1; }
   .dark-toggle:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
-
-  @media (prefers-reduced-motion: reduce) {
-    body::before { transition: none; }
-  }
 
   /* Main */
   main {
@@ -347,6 +344,15 @@
   .site-nav button:hover { transform: scale(1.05); opacity: 1; }
   .site-nav button:focus-visible { outline: 1px solid rgba(255,255,255,.8); outline-offset: 5px; }
 
+  /* Nav icons follow the mode: champagne "-light" icons in light mode (default),
+     original chrome icons in darkness mode. Both are in the DOM so the swap is instant. */
+  .site-nav img.icon-dark,
+  .home-bottom img.icon-dark { display: none; }
+  html.darkness .site-nav img.icon-dark,
+  html.darkness .home-bottom img.icon-dark { display: block; }
+  html.darkness .site-nav img.icon-light,
+  html.darkness .home-bottom img.icon-light { display: none; }
+
   /* Image lightbox opened by the cat icon */
   .lightbox {
     position: fixed;
@@ -393,15 +399,18 @@
 
   <nav class="site-nav" aria-label="Links">
     <a href="https://steamcommunity.com/id/J0AG/" target="_blank" rel="noopener" aria-label="Steam" title="Steam">
-      <img src="assets/steam.png" alt="">
+      <img class="icon-light" src="assets/steam-light.png" alt="">
+      <img class="icon-dark" src="assets/steam.png" alt="">
     </a>
 
     <button type="button" id="catBtn" aria-label="Open image" title="Cat">
-      <img src="assets/cat.png" alt="">
+      <img class="icon-light" src="assets/cat-light.png" alt="">
+      <img class="icon-dark" src="assets/cat.png" alt="">
     </button>
     
     <a href="https://music.apple.com/profile/joag" target="_blank" rel="noopener" aria-label="Music" title="Music">
-      <img src="assets/music.png" alt="">
+      <img class="icon-light" src="assets/music-light.png" alt="">
+      <img class="icon-dark" src="assets/music.png" alt="">
     </a>
 
   </nav>
@@ -447,7 +456,8 @@
       <img src="photos/Picture1.png" alt="CFD model resolution comparison" class="cfd-image">
 
     <a class="home-bottom" href="index.html" aria-label="Home" title="Home">
-      <img src="assets/home-chrome.png" alt="">
+      <img class="icon-light" src="assets/home-chrome-light.png" alt="">
+      <img class="icon-dark" src="assets/home-chrome.png" alt="">
     </a>
 
     </section>
