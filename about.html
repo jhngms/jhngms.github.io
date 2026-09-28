@@ -6,13 +6,32 @@
 <title>about_me</title>
 
 <script>
+  // --- Loading screen ---
+  window.addEventListener('DOMContentLoaded', () => {
+    const loader = document.getElementById('loader');
+    const loaderText = document.getElementById('loader-word');
+    const loadingWord = '...';
 
-    // --- Loading screen ---
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        document.getElementById('loader').classList.add('loaded');
-      }, 700);
-    });
+    const keyDelays = [50,60];
+    const afterTypingDelay = 350;
+
+    let loadingIndex = 0;
+
+    function typeLoading() {
+      loadingIndex++;
+      loaderText.textContent = loadingWord.slice(0, loadingIndex);
+
+      if (loadingIndex < loadingWord.length) {
+        setTimeout(typeLoading, keyDelays[loadingIndex - 1]);
+      } else {
+        setTimeout(() => {
+          loader.classList.add('loaded');
+        }, afterTypingDelay);
+      }
+    }
+
+    typeLoading();
+  });
 
   // Apply the saved darkness setting before first paint (no flash).
   try {
@@ -454,6 +473,22 @@
     font-weight: 600;
   }
 
+  .loader-cursor {
+    display: inline-block;
+    margin-left: 2px;
+    animation: cursor-blink .7s steps(1) infinite;
+  }
+
+  @keyframes cursor-blink {
+    0%, 50% {
+      opacity: 1;
+    }
+
+    51%, 100% {
+      opacity: 0;
+    }
+  }
+
 </style>
 </head>
 
@@ -461,7 +496,9 @@
 
 
   <div id="loader" aria-label="Loading">
-    <div class="loader-text">loading...</div>
+    <div class="loader-text">
+      <span id="loader-word"></span><span class="loader-cursor">|</span>
+    </div>
   </div>
 
 
