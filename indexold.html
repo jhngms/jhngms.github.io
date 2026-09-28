@@ -555,7 +555,7 @@
 
     // Smooth easing with no spring/overshoot. This keeps the glide fluid
     // on phones without the "bounce into place" effect.
-    const EASE = reduceMotion ? 1 : 0.095;
+    const EASE = reduceMotion ? 1 : 0.12;
 
     // Shortest wrapped distance from `a` to `b` on a circular track of length `total`
     function wrappedDelta(a, b) {
@@ -601,27 +601,66 @@
 
     function render() {
       const centerY = carouselEl.clientHeight / 2;
-
-      // Keep every slide on one continuous vertical track.
-      // This avoids the old layout re-positioning cards when the active
-      // slide changes, which could cause a visible jump with mixed photo sizes.
-      const SLOT = Math.min(carouselEl.clientHeight * 0.62, 560);
+      const visible = [];
 
       slides.forEach((slide, i) => {
         const diff = wrappedDelta(position, i);
         styleSlide(slide, diff);
 
         if (Math.abs(diff) <= 2.4) {
-          const scale = parseFloat(slide.dataset.scale || 1);
-
-          slide.style.top = `${centerY}px`;
-          slide.style.transformOrigin = 'center center';
-          slide.style.transform =
-            `translate3d(-50%, -50%, 0) translate3d(0, ${diff * SLOT}px, 0) scale(${scale})`;
+          visible.push({
+            slide,
+            diff,
+            abs: Math.abs(diff),
+            height: slide.offsetHeight * parseFloat(slide.dataset.scale || 1)
+          });
         }
       });
 
-    // Mark whichever slide is nearest to center as interactive/active
+      // Place the active card exactly at the carousel center.
+      const centerItem = visible.find(item => Math.abs(item.diff) < 0.5);
+      if (centerItem) {
+        const h0 = centerItem.height;
+        centerItem.slide.style.top = `${centerY - h0 / 2}px`;
+        centerItem.slide.style.transform =
+          'translate3d(-50%, 0, 0) scale(' + centerItem.slide.dataset.scale + ')';
+
+        // First previous: its bottom touches the active card's center.
+        const prev1 = visible.find(item => item.diff < -0.5 && item.diff > -1.5);
+        if (prev1) {
+          prev1.slide.style.top = `${centerY - prev1.height}px`;
+          prev1.slide.style.transform =
+            'translate3d(-50%, 0, 0) scale(' + prev1.slide.dataset.scale + ')';
+        }
+
+        // Second previous: its bottom touches the center of the first previous.
+        const prev2 = visible.find(item => item.diff <= -1.5);
+        if (prev2) {
+          prev2.slide.style.top =
+            `${centerY - prev1.height / 2 - prev2.height}px`;
+          prev2.slide.style.transform =
+            'translate3d(-50%, 0, 0) scale(' + prev2.slide.dataset.scale + ')';
+        }
+
+        // First next: its top starts at the active card's center.
+        const next1 = visible.find(item => item.diff > 0.5 && item.diff < 1.5);
+        if (next1) {
+          next1.slide.style.top = `${centerY}px`;
+          next1.slide.style.transform =
+            'translate3d(-50%, 0, 0) scale(' + next1.slide.dataset.scale + ')';
+        }
+
+        // Second next: its top starts at the center of the first next.
+        const next2 = visible.find(item => item.diff >= 1.5);
+        if (next2) {
+          next2.slide.style.top =
+            `${centerY + next1.height / 2}px`;
+          next2.slide.style.transform =
+            'translate3d(-50%, 0, 0) scale(' + next2.slide.dataset.scale + ')';
+        }
+      }
+
+      // Mark whichever slide is nearest to center as interactive/active
       const nearestIndex = wrap(Math.round(position));
       slides.forEach((slide, i) => {
         slide.classList.toggle('active', i === nearestIndex);
