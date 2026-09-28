@@ -382,26 +382,24 @@
   #loader {
     position: fixed;
     inset: 0;
-    z-index: 2147483647;
-    background: rgb(247,243,232) !important;
-    color: #4a2f24 !important;
+    z-index: 9999;
+    background: var(--page-background);
+    color: var(--title-color);
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 1;
     visibility: visible;
-    pointer-events: auto;
     transition: opacity .8s ease, visibility .8s ease;
   }
 
   #loader.loaded {
     opacity: 0;
     visibility: hidden;
-    pointer-events: none;
   }
 
   .loader-text {
-    color: #4a2f24 !important;
+    color: var(--title-color);
     font-size: 1.2rem;
     font-weight: 600;
     letter-spacing: .02em;
