@@ -400,6 +400,23 @@
     pointer-events: none;
   }
 
+  #loader {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .loader-note {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #4a2f24 !important;
+    font-size: 0.85rem;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: .01em;
+  }
+
   .loader-text {
     color: #4a2f24 !important;
     font-size: 1.2rem;
@@ -465,6 +482,7 @@
 
 
   <div id="loader" aria-label="Loading">
+    <div class="loader-note">GPU-intensive- may not load on weaker devices :(</div>
     <div class="loader-text"><span id="loader-word"></span><span class="loader-cursor">|</span></div>
   </div>
 
