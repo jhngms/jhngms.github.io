@@ -227,15 +227,13 @@
   .slide {
     position: absolute;
     left: 50%;
-    width: fit-content;
-    max-width: min(760px, 92vw);
+    width: min(760px, 92vw);
     text-align: center;
     /* No CSS transition here on purpose — the JS animation loop below
        sets transform/opacity/filter every frame, continuously easing
        toward the scroll position. That's what makes it feel fluid
        instead of "jump then animate." */
     pointer-events: none;
-    overflow: hidden;
     will-change: transform, opacity, filter;
     backface-visibility: hidden;
     contain: layout style;
@@ -884,7 +882,20 @@
       // Keep the soft blur on the stacked photos behind the active image.
       // Photos below the active image stay fully opaque; photos above it
       // gradually fade away as they move out of view.
-      slide.style.filter = `blur(${Math.min(Math.abs(diff) * 4, 7)}px)`;
+      const blur = Math.min(abs * 4, 7);
+      const thumb = slide.querySelector('.thumb');
+      slide.style.filter = 'none';
+      if (thumb) {
+        // Keep the card border completely unchanged. Blur only the
+        // photo/caption contents, with the card's existing overflow
+        // clipping preventing the blur from escaping its boundaries.
+        thumb.style.filter = 'none';
+        thumb.style.clipPath = 'none';
+        const img = thumb.querySelector('img');
+        const caption = thumb.querySelector('.caption');
+        if (img) img.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+        if (caption) caption.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+      }
 
       if (diff < 0) {
         // Images above the active photo fade smoothly into nothing.
